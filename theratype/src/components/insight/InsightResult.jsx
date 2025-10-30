@@ -4,6 +4,8 @@ import Card from '../common/Card';
 import { assignProfile, therapySentences } from '../../data/therapySentences';
 
 const InsightResult = ({ selections }) => {
+  console.log('[InsightResult] Received selections:', selections);
+
   const categoryScores = {};
   let totalWpm = 0;
   let totalAccuracy = 0;
@@ -26,6 +28,8 @@ const InsightResult = ({ selections }) => {
 
   const profileKey = assignProfile(categoryScores);
   const profile = therapySentences[profileKey];
+  console.log('[InsightResult] Profile Key:', profileKey);
+  console.log('[InsightResult] Profile:', profile);
 
   const categoryCounts = {};
   selections.forEach(selection => {

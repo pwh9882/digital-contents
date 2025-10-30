@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Button from './components/common/Button';
 import Card from './components/common/Card';
 import InsightMode from './pages/InsightMode';
+import TherapyMode from './pages/TherapyMode';
 
 // 임시 페이지 컴포넌트들 (추후 실제 페이지로 교체)
 const LandingPage = () => (
@@ -39,16 +40,6 @@ const LandingPage = () => (
   </div>
 );
 
-const TherapyModePage = () => (
-  <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
-    <Card title="Therapy Mode" className="max-w-3xl">
-      <p className="text-neutral-700">
-        개인 맞춤형 긍정 자극 타이핑 훈련 (구현 예정)
-      </p>
-    </Card>
-  </div>
-);
-
 const DashboardPage = () => (
   <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
     <Card title="Dashboard" className="max-w-4xl">
@@ -65,7 +56,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/insight" element={<InsightMode />} />
-        <Route path="/therapy" element={<TherapyModePage />} />
+        <Route path="/therapy" element={<TherapyMode />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </Router>

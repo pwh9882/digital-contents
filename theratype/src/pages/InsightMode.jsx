@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { insightSentences } from '../data/insightSentences';
+import { assignProfile } from '../data/therapySentences';
 import SentencePair from '../components/insight/SentencePair';
 import TypingInput from '../components/insight/TypingInput';
 import InsightResult from '../components/insight/InsightResult';
@@ -35,10 +36,27 @@ const InsightMode = () => {
       setCurrentIndex(currentIndex + 1);
       setSelectedSentence(null);
     } else {
+      // 카테고리별 점수 계산
+      const categoryScores = {};
+      updatedSelections.forEach(selection => {
+        const { category, choice } = selection;
+        if (!categoryScores[category]) {
+          categoryScores[category] = 0;
+        }
+        categoryScores[category] += choice.weight;
+      });
+
+      // 프로파일 할당 (therapySentences.js의 assignProfile 함수 사용)
+      const assignedProfile = assignProfile(categoryScores);
+      console.log('Category Scores:', categoryScores);
+      console.log('Assigned Profile:', assignedProfile);
+      console.log('Selections:', updatedSelections);
+
       setIsComplete(true);
       localStorage.setItem('insightResults', JSON.stringify({
         selections: updatedSelections,
         completedAt: new Date().toISOString(),
+        assignedProfile: assignedProfile,
       }));
     }
   };

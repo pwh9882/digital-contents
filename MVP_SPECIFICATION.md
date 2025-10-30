@@ -748,7 +748,8 @@ function saveSession() {
 - [ ] 데이터 수집 시스템 정상 작동 (Firestore에 데이터 저장 확인)
 
 ### 사용자 경험 성공
-- [ ] SUS 점수 ≥ 65 (평균 이상)
+- [ ] SUS 점수 ≥ 68 (평균 이상)
+<!-- CORRECTED: SUS 평균은 68점 (50th percentile), 65점은 평균 이하 (44th percentile). 68 이상이 평균 이상, 70 이상이 acceptable, 80 이상이 excellent -->
 - [ ] 사용자 만족도 ≥ 3.5/5.0
 - [ ] 완료율 ≥ 50% (10명 중 5명 이상이 2주 완료)
 

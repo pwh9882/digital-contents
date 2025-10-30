@@ -727,16 +727,23 @@ logEvent(analytics, 'insight_completed', {
 
 ```bash
 # Node.js 설치 확인
-node -v  # v16+ 권장
+<!-- UPDATED: Node.js v16 reached end-of-life on Sept 11, 2023. v20 is current LTS with support until 2026-04-30 -->
+node -v  # Node.js v20 LTS 권장 (v16은 2023년 9월 EOL)
 npm -v   # v8+ 권장
 ```
 
 ### 2. 프로젝트 초기화
 
 ```bash
+<!-- ⚠️ NOTICE: Create React App was officially sunset by React team in February 2025. Consider using Vite, Next.js, or Remix for new projects. Source: https://react.dev/blog/2025/02/14/sunsetting-create-react-app -->
 # React 앱 생성
 npx create-react-app theratype
 cd theratype
+
+# 권장 대안 (2025+):
+# Vite: npm create vite@latest theratype -- --template react
+# Next.js: npx create-next-app@latest theratype
+# Remix: npx create-remix@latest
 
 # 필요한 패키지 설치
 npm install firebase

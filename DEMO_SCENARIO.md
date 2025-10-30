@@ -60,6 +60,7 @@ Therapeutic Typing Platform
 
 📊 통계:
 • 성인 스트레스 경험률: 64% (통계청, 2023)
+<!-- 출처 재확인 필요: 스트레스 인지율 25-30% (2023) 또는 정신건강 문제 경험률 73.6% (2024), 64%의 정확한 출처 불명 -->
 • 우울증 유병률: 5.3%
 • 하지만, 치료 받는 비율: 15% 미만
 
@@ -204,7 +205,8 @@ Insight 결과 → 4가지 프로파일
    • ✅ 신경과학적 근거
 
 3️⃣ Digital CBT
-   • FDA 승인 사례 다수 (Woebot, reSET 등)
+   • FDA 승인 사례: reSET, Somryst 등 (Woebot은 Breakthrough Device Designation, 2021)
+   <!-- CORRECTED: Woebot은 FDA 승인 아닌 Breakthrough Device Designation 보유 -->
    • 효과 크기 d=0.4-0.6 (중간)
    • ✅ 임상적 효과성 입증
 ```
@@ -230,8 +232,7 @@ Insight 결과 → 4가지 프로파일
 
 연구 사례:
 • Epp et al. (2011): 감정 분류 정확도 75-84%
-• Giancardo et al. (2016): 파킨슨병 진단
-  → FDA 승인 의료기기 ✅
+• Giancardo et al. (2016): 키보드 타이핑으로 파킨슨병 조기 징후 탐지 연구 (Scientific Reports)
 
 TheraType 활용:
 • 타이핑 속도 변화 → 피로도, 집중력

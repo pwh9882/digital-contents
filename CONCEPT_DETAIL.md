@@ -711,8 +711,10 @@ IF insight_score["stress_response"] < 30 for 2 weeks:
 - **Embodied Cognition**: 신체 행위(타이핑) + 인지 = 강화된 학습
 
 ### 데이터 수집 근거
-- **Keystroke dynamics 연구**: 행동 바이오마커로서 가능성 (Giancardo, 2016 - FDA 승인 파킨슨 진단)
+- **Keystroke dynamics 연구**: 행동 바이오마커로서 가능성 (Giancardo et al., 2016 - Scientific Reports, 연구 단계)
 - **Digital phenotyping**: 수동적 데이터로 정신 건강 모니터링
+
+<!-- REFERENCE CORRECTED: Giancardo 2016 연구는 Scientific Reports에 게재된 학술 연구. FDA 승인 의료기기 아님. neuroQWERTY는 2020년 FDA Breakthrough Device Designation 획득 (승인과는 다름) -->
 
 ---
 

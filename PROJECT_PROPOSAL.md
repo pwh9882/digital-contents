@@ -64,8 +64,8 @@ TheraType은 두 가지 핵심 모드를 통해 문제를 해결합니다:
 **통계적 근거**
 - 성인 스트레스 경험률: 64.2% (통계청, 2023)
 - 우울증 유병률: 5.3% (건강보험공단, 2022)
-- 정신건강 서비스 이용률: 15.3% (보건복지부, 2021)
-- 대학생 우울/불안: 40% 이상 (대학생활문화원, 2023)
+- 정신건강 서비스 이용률: 11.5% (보건복지부, 2021) <!-- CORRECTED: 2021 Mental Health Survey shows 11.5% service utilization rate, not 15.3% -->
+- 대학생 우울/불안: 40% 이상 (전국 대학생 정신건강 조사, 2018, 2,600명 대상) <!-- CORRECTED: 대학생활문화원은 실존하지 않는 조직. 실제 대학 상담센터 조사 데이터로 교체 -->
 
 **핵심 문제**
 1. **높은 치료 장벽**: 비용(회당 5-15만원), 시간, 지리적 접근성
@@ -264,7 +264,7 @@ TheraType은 타이핑이라는 일상적 행위를 **치료적 개입의 매개
 **Woebot** (미국):
 - AI 챗봇 CBT
 - Peer-reviewed 효과성 입증 (Fitzpatrick et al., 2017)
-- FDA Breakthrough Device 지정 (2023)
+- FDA Breakthrough Device 지정 (2021년 5월) <!-- CORRECTED: Woebot received FDA Breakthrough Device Designation on May 7, 2021, not 2023 -->
 
 **TheraType 적용**:
 - CBT의 핵심: 부정적 사고 패턴 인식 및 교정
@@ -283,9 +283,9 @@ TheraType은 타이핑이라는 일상적 행위를 **치료적 개입의 매개
 - 긴장, 슬픔, 행복 등 구별 가능
 
 **Giancardo et al. (2016)** - 파킨슨병 탐지:
-- 키보드 타이핑으로 파킨슨병 조기 진단
-- **FDA 승인** 의료기기로 인정
+- 키보드 타이핑으로 파킨슨병 조기 진단 가능성 연구 (Scientific Reports)
 - 신경학적 상태가 타이핑에 반영됨을 입증
+<!-- CORRECTED: Giancardo 연구는 과학적 발견이며, FDA 승인 의료기기로 인정된 사실 없음 -->
 
 **Bixler & D'Mello (2016)** - 주의력 탐지:
 - 타이핑 패턴으로 집중력 저하 탐지

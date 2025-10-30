@@ -64,7 +64,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
   - 온라인 전달 방식의 효과성 입증
 - **TheraType 연관**: 웹 기반 개입의 타당성
 
-**[5] Sloan, D. M., Feinstein, B. A., & Marx, B. P. (2008)**
+**[5] Sloan, D. M., Feinstein, B. A., & Marx, B. P. (2009)**
 - **제목**: The durability of beneficial health effects associated with expressive writing
 - **저널**: *Anxiety, Stress & Coping*, 22(5), 509-523
 - **결과**: 글쓰기 효과가 장기간 지속 (수개월)
@@ -154,7 +154,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
   - 우울 증상 유의미한 감소 (PHQ-9)
   - 불안 증상 감소 (GAD-7)
   - 높은 사용자 참여도
-- **현재**: Woebot FDA Breakthrough Device 지정 (2023)
+- **현재**: Woebot FDA Breakthrough Device 지정 (2021년 5월)
 
 ### 3.2 디지털 CBT 메타분석
 
@@ -192,7 +192,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
 - **결과**:
   - 파킨슨병 조기 탐지 가능
   - 민감도/특이도 높음
-  - **FDA 승인** 의료기기로 인정
+  - **연구 단계, FDA Breakthrough Device Designation (neuroQWERTY, 2020), 정식 승인 아님**
 - **의미**:
   - 키스트로크 다이내믹스가 의학적으로 인정받음
   - TheraType의 keystroke 분석도 과학적 타당성 있음
@@ -227,7 +227,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
 **[18] Grand View Research. (2023)**
 - **보고서**: *Digital Therapeutics Market Size, Share & Trends Analysis Report*
 - **데이터**:
-  - 2022년 시장 규모: $4.2B
+  - 2022년 시장 규모: $4.2B (출처에 따라 $4.4B-$6.2B, Vantage Market Research: $4.8B)
   - 2030년 예상: $17.8B
   - 연평균 성장률 (CAGR): 19.8%
   - 정신건강 분야: 가장 빠른 성장 (~23% CAGR)
@@ -272,7 +272,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
 **[23] 통계청. (2023)**
 - **조사**: *사회조사: 스트레스 및 우울감 경험률*
 - **데이터**:
-  - 성인 스트레스 경험률: 64.2%
+  - 성인 스트레스 경험률: 64.2% (정신건강 문제 경험률 73.6% (2024) 또는 스트레스 인지율 25-30% (2023), 64.2% 출처 재확인 필요)
   - 우울감 경험률: 31.2%
   - 20-30대에서 특히 높음
 
@@ -286,7 +286,7 @@ TheraType의 각 요소는 수십 년간 축적된 심리학 및 행동과학 �
 **[25] 보건복지부. (2021)**
 - **조사**: *정신건강 실태조사*
 - **데이터**:
-  - 정신건강 서비스 이용률: 15.3%
+  - 정신건강 서비스 이용률: 11.5% (평생 이용률), 7.2% (1년 이용률)
   - 주요 장벽: 비용, 시간, 낙인
   - 디지털 솔루션 선호도: 20-30대 60%+
 

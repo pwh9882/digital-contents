@@ -1,0 +1,95 @@
+import { useState } from 'react';
+import { insightSentences } from '../data/insightSentences';
+import SentencePair from '../components/insight/SentencePair';
+import TypingInput from '../components/insight/TypingInput';
+import InsightResult from '../components/insight/InsightResult';
+
+const InsightMode = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedSentence, setSelectedSentence] = useState(null);
+  const [selections, setSelections] = useState([]);
+  const [isComplete, setIsComplete] = useState(false);
+
+  const currentPair = insightSentences[currentIndex];
+  const progress = ((currentIndex + 1) / insightSentences.length) * 100;
+
+  const handleSelect = (choice) => {
+    setSelectedSentence(choice.text);
+  };
+
+  const handleTypingComplete = (sessionData) => {
+    const newSelection = {
+      pairId: currentPair.id,
+      category: currentPair.category,
+      categoryName: currentPair.categoryName,
+      choice: selectedSentence === currentPair.pairA.text ? currentPair.pairA : currentPair.pairB,
+      wpm: sessionData.wpm,
+      accuracy: sessionData.accuracy,
+      sessionData,
+    };
+
+    const updatedSelections = [...selections, newSelection];
+    setSelections(updatedSelections);
+
+    if (currentIndex < insightSentences.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setSelectedSentence(null);
+    } else {
+      setIsComplete(true);
+      localStorage.setItem('insightResults', JSON.stringify({
+        selections: updatedSelections,
+        completedAt: new Date().toISOString(),
+      }));
+    }
+  };
+
+  if (isComplete) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 p-6">
+        <InsightResult selections={selections} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold text-primary-700">Insight Mode</h1>
+            <div className="text-neutral-600">
+              {currentIndex + 1} / {insightSentences.length}
+            </div>
+          </div>
+          <div className="w-full bg-neutral-200 rounded-full h-3">
+            <div
+              className="bg-primary-600 h-3 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {!selectedSentence ? (
+          <SentencePair
+            pairData={currentPair}
+            onSelect={handleSelect}
+          />
+        ) : (
+          <div className="bg-white rounded-xl p-8 shadow-lg">
+            <div className="mb-6 text-center">
+              <span className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                선택한 문장을 입력하세요
+              </span>
+            </div>
+            <TypingInput
+              targetSentence={selectedSentence}
+              onComplete={handleTypingComplete}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default InsightMode;

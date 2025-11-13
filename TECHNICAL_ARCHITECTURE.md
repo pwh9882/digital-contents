@@ -59,12 +59,16 @@
 - **React Router v6**
   - SPA 라우팅
   - 주요 라우트:
-    - `/` - 홈/로그인
+    - `/` - **MainHub** (중앙 허브, 모드 선택)
     - `/onboarding` - 온보딩
     - `/insight` - Insight Mode
-    - `/therapy` - Therapy Mode
+    - `/therapy` - Therapy Mode (맞춤형 + 데모 모드)
     - `/dashboard` - 대시보드
     - `/settings` - 설정
+  - Coming Soon 라우트 (선택적):
+    - `/journal` - Journal Mode (미구현)
+    - `/freewriting` - Free Writing Mode (미구현)
+    - `/challenge` - Challenge Mode (미구현)
 
 #### Styling
 - **Option 1: CSS Modules**

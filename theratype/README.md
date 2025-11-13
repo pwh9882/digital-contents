@@ -38,6 +38,10 @@ cp .env.example .env.local
 npm run dev
 
 # 브라우저에서 http://localhost:5173 접속
+# → MainHub 화면에서 원하는 모드 선택
+#   - Insight Mode: 자기인식 평가 (10개 문장 쌍)
+#   - Therapy Mode: 긍정 문장 타이핑 (맞춤형 or 데모)
+#   - Dashboard: 진행 현황 확인
 ```
 
 ### 빌드

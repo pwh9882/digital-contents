@@ -11,39 +11,42 @@ const TherapyMode = () => {
   const [sessionHistory, setSessionHistory] = useState([]);
   const [currentSentence, setCurrentSentence] = useState(null);
   const [masteryProgress, setMasteryProgress] = useState(null);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   // localStorage에서 프로파일 및 세션 기록 로드
   useEffect(() => {
     const insightResults = localStorage.getItem('insightResults');
+    let profile = null;
 
-    if (!insightResults) {
-      // Insight Mode를 먼저 완료해야 함
-      navigate('/insight');
-      return;
+    if (insightResults) {
+      try {
+        const results = JSON.parse(insightResults);
+        profile = results.assignedProfile;
+      } catch (error) {
+        console.error('Failed to load insight results:', error);
+      }
     }
 
-    try {
-      const results = JSON.parse(insightResults);
-      const profile = results.assignedProfile;
+    // 프로필이 없으면 demo 모드 사용
+    if (!profile) {
+      profile = 'demo';
+      setIsDemoMode(true);
+    }
 
-      if (!profile) {
-        navigate('/insight');
-        return;
-      }
+    setProfileKey(profile);
 
-      setProfileKey(profile);
-
-      // 세션 기록 로드
-      const savedSessions = localStorage.getItem('therapySessions');
-      if (savedSessions) {
+    // 세션 기록 로드
+    const savedSessions = localStorage.getItem('therapySessions');
+    if (savedSessions) {
+      try {
         const sessions = JSON.parse(savedSessions);
         if (sessions.profileKey === profile) {
           setSessionHistory(sessions.sessions || []);
         }
+      } catch (error) {
+        console.error('Failed to load therapy sessions:', error);
+        setSessionHistory([]);
       }
-    } catch (error) {
-      console.error('Failed to load insight results:', error);
-      navigate('/insight');
     }
   }, [navigate]);
 
@@ -99,11 +102,36 @@ const TherapyMode = () => {
               Therapy Mode
             </h1>
             <p className="text-neutral-600">
-              맞춤형 긍정 자극 타이핑 훈련
+              {isDemoMode ? '체험 모드로 TheraType을 경험해보세요' : '맞춤형 긍정 자극 타이핑 훈련'}
             </p>
           </div>
           <ProfileBadge profileKey={profileKey} />
         </div>
+
+        {/* 데모 모드 안내 배너 */}
+        {isDemoMode && (
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6 shadow-md">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">💡</div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-blue-900 mb-2">
+                  체험 모드로 시작하셨습니다
+                </h3>
+                <p className="text-blue-800 mb-3 text-sm leading-relaxed">
+                  현재 기본 긍정 문장으로 연습하고 있습니다.
+                  <strong className="font-semibold"> Insight Mode를 완료하면</strong>
+                  당신에게 딱 맞는 맞춤형 문장을 추천받을 수 있어요!
+                </p>
+                <button
+                  onClick={() => navigate('/insight')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm shadow-sm"
+                >
+                  Insight Mode 시작하기 →
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 메인 그리드 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -148,10 +176,10 @@ const TherapyMode = () => {
         {/* 네비게이션 */}
         <div className="mt-8 flex justify-center gap-4">
           <button
-            onClick={() => navigate('/insight')}
+            onClick={() => navigate('/')}
             className="px-6 py-3 bg-white text-neutral-700 rounded-lg border-2 border-neutral-300 hover:border-neutral-400 transition-colors"
           >
-            Insight Mode로 돌아가기
+            ← 홈으로 돌아가기
           </button>
           <button
             onClick={() => navigate('/dashboard')}

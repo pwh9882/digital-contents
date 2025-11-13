@@ -188,6 +188,52 @@ export const therapySentences = {
       },
     ],
   },
+
+  // 프로파일 5: 데모/체험 모드 (Demo Mode)
+  // Insight Mode를 완료하지 않은 사용자를 위한 중립적 긍정 문장
+  demo: {
+    profileName: '체험 모드',
+    profileDescription: '다양한 긍정 문장으로 TheraType을 경험해보세요',
+    color: '#607D8B', // Blue Grey
+    icon: '✨',
+    sentences: [
+      {
+        id: 'demo_01',
+        text: '오늘 하루도 잘 버텨냈다',
+        difficulty: 'beginner',
+        therapeuticIntent: '일상의 노력 인정',
+        scientificBasis: 'Self-Affirmation Theory (Steele, 1988)',
+      },
+      {
+        id: 'demo_02',
+        text: '나는 나만의 속도로 나아간다',
+        difficulty: 'beginner',
+        therapeuticIntent: '자기 수용',
+        scientificBasis: 'Self-Compassion (Neff, 2003)',
+      },
+      {
+        id: 'demo_03',
+        text: '어려운 순간도 성장의 기회가 될 수 있다',
+        difficulty: 'intermediate',
+        therapeuticIntent: '긍정적 재해석',
+        scientificBasis: 'Cognitive Reframing (Beck, 1976)',
+      },
+      {
+        id: 'demo_04',
+        text: '나는 충분히 잘하고 있다',
+        difficulty: 'intermediate',
+        therapeuticIntent: '자기 긍정',
+        scientificBasis: 'Positive Psychology (Seligman, 2002)',
+      },
+      {
+        id: 'demo_05',
+        text: '지금 이 순간을 소중히 여긴다',
+        difficulty: 'beginner',
+        therapeuticIntent: '현재 순간 집중',
+        scientificBasis: 'Mindfulness (Kabat-Zinn, 1990)',
+      },
+    ],
+  },
 };
 
 /**
@@ -234,7 +280,8 @@ export const assignProfile = (insightScores) => {
  * @returns {Object} 프로파일 데이터 (name, sentences 등)
  */
 export const getSentencesByProfile = (profileKey) => {
-  return therapySentences[profileKey] || therapySentences.self_esteem;
+  // profileKey가 없거나 유효하지 않으면 demo 프로파일 사용
+  return therapySentences[profileKey] || therapySentences.demo;
 };
 
 /**

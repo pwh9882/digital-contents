@@ -260,11 +260,12 @@ TheraType 활용:
 [데모 사이트 URL 또는 로컬]
 
 시연 순서:
-1. 로그인
-2. Insight Mode 1-2개 문장 체험
-3. 결과 확인
-4. Therapy Mode 1개 문장 체험
-5. 대시보드 확인
+1. 로그인 → **MainHub** 진입
+2. MainHub에서 Insight Mode 선택
+3. Insight Mode 1-2개 문장 체험
+4. MainHub 복귀 → Therapy Mode 선택
+5. Therapy Mode 1개 문장 체험 (데모 모드 안내 표시)
+6. Dashboard 확인
 ```
 
 **[스크립트]**
@@ -274,7 +275,7 @@ TheraType 활용:
 
 ### 📍 데모 시연 (7:30 - 10:00)
 
-#### Step 1: 로그인 화면 (7:30 - 7:45)
+#### Step 1: 로그인 → MainHub (7:30 - 8:00)
 
 **[화면]**
 - TheraType 로고
@@ -283,12 +284,19 @@ TheraType 활용:
 
 **[액션]**
 1. 미리 만들어둔 테스트 계정으로 로그인
-2. (또는 "게스트로 체험하기" 버튼)
+2. **MainHub 화면 진입**
+   - 6개 모드 카드 보이기 (3개 활성, 3개 Coming Soon)
+   - Insight, Therapy, Dashboard 활성화 상태 보이기
+   - Journal, Free Writing, Challenge "Soon" 표시
 
 **[스크립트]**
-> "로그인하면 간단한 온보딩이 나옵니다. 사용자는 나이대와 타이핑 수준을 입력합니다."
+> "로그인하면 MainHub가 나옵니다. 여기서 사용자가 원하는 모드를 자유롭게 선택할 수 있습니다.
+>
+> 보시다시피 3개 모드가 활성화되어 있고, 3개는 'Coming Soon'으로 표시되어 있습니다. 이는 향후 확장 가능성을 보여주는 것입니다.
+>
+> Insight Mode를 선택해보겠습니다."
 
-#### Step 2: Insight Mode 시연 (7:45 - 8:45)
+#### Step 2: Insight Mode 시연 (8:00 - 8:45)
 
 **[화면]**
 - 문장 쌍 제시

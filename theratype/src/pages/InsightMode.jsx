@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { insightSentences } from '../data/insightSentences';
 import { assignProfile } from '../data/therapySentences';
 import SentencePair from '../components/insight/SentencePair';
@@ -8,13 +8,38 @@ import InsightResult from '../components/insight/InsightResult';
 const InsightMode = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSentence, setSelectedSentence] = useState(null);
+  const [selectedSide, setSelectedSide] = useState(null); // 'A' or 'B'
   const [selections, setSelections] = useState([]);
   const [isComplete, setIsComplete] = useState(false);
 
   const currentPair = insightSentences[currentIndex];
   const progress = ((currentIndex + 1) / insightSentences.length) * 100;
 
-  const handleSelect = (choice) => {
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedSentence) {
+        if (e.key === 'Escape') {
+          setSelectedSentence(null);
+          setSelectedSide(null);
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === '1') {
+        handleSelect('A');
+      } else if (e.key === 'ArrowRight' || e.key === '2') {
+        handleSelect('B');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedSentence]);
+
+  const handleSelect = (side) => {
+    setSelectedSide(side);
+    const choice = side === 'A' ? currentPair.pairA : currentPair.pairB;
     setSelectedSentence(choice.text);
   };
 
@@ -23,7 +48,7 @@ const InsightMode = () => {
       pairId: currentPair.id,
       category: currentPair.category,
       categoryName: currentPair.categoryName,
-      choice: selectedSentence === currentPair.pairA.text ? currentPair.pairA : currentPair.pairB,
+      choice: selectedSide === 'A' ? currentPair.pairA : currentPair.pairB,
       wpm: sessionData.wpm,
       accuracy: sessionData.accuracy,
       sessionData,
@@ -35,6 +60,7 @@ const InsightMode = () => {
     if (currentIndex < insightSentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setSelectedSentence(null);
+      setSelectedSide(null);
     } else {
       // 카테고리별 점수 계산
       const categoryScores = {};
@@ -91,13 +117,17 @@ const InsightMode = () => {
           <SentencePair
             pairData={currentPair}
             onSelect={handleSelect}
+            selectedChoice={selectedSide}
           />
         ) : (
-          <div className="bg-white rounded-xl p-8 shadow-lg">
+          <div className="bg-white rounded-xl p-8 shadow-lg animate-fade-in-up">
             <div className="mb-6 text-center">
-              <span className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
-                선택한 문장을 입력하세요
+              <span className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-2">
+                선택한 문장을 입력하여 확정하세요
               </span>
+              <p className="text-neutral-500 text-sm">
+                (다른 문장을 선택하려면 ESC를 누르세요)
+              </p>
             </div>
             <TypingInput
               targetSentence={selectedSentence}

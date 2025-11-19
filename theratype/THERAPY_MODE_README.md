@@ -21,10 +21,19 @@ npm run dev
 서버 주소: http://localhost:5173/ (또는 자동으로 할당된 포트)
 
 ### 테스트 플로우
-1. `/insight` 접속 → Insight Mode 완료
-2. `/therapy` 접속 → 맞춤형 타이핑 훈련
-3. 문장 타이핑 → 결과 확인 → 다음 문장
-4. 5개 문장 마스터 → 대시보드 이동
+
+**방법 1: 맞춤형 경험 (권장)**
+1. `/` 접속 → MainHub
+2. "Insight Mode" 선택 → 10개 문장 쌍 완료
+3. MainHub 복귀 → "Therapy Mode" 선택
+4. 맞춤형 문장으로 타이핑 훈련
+5. 5개 문장 마스터 → Dashboard 확인
+
+**방법 2: 데모 모드 (빠른 체험)**
+1. `/` 접속 → MainHub
+2. "Therapy Mode" 바로 선택
+3. 데모 문장으로 타이핑 훈련 (프로파일 없음)
+4. 안내 배너에서 "Insight Mode 시작하기" 클릭 가능
 
 ---
 

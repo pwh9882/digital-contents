@@ -26,25 +26,74 @@ export const calculateWPM = (charCount, timeMs) => {
  * @param {string} typed - 타이핑한 문장
  * @returns {number} 정확도 (0-100%)
  */
+/**
+ * 정확도 계산 (Real-time Accuracy)
+ * 사용자가 입력한 텍스트와 타겟 텍스트의 "가장 잘 맞는 접두사"와의 거리를 계산합니다.
+ * 이를 통해 입력 도중에도 정확한 정확도를 제공합니다.
+ *
+ * @param {string} target - 목표 문장
+ * @param {string} typed - 타이핑한 문장
+ * @returns {number} 정확도 (0-100%)
+ */
 export const calculateAccuracy = (target, typed) => {
   if (!target || target.length === 0) return 100;
+  if (!typed || typed.length === 0) return 100; // 아무것도 입력 안했으면 100% 시작
 
   const targetLen = target.length;
   const typedLen = typed.length;
-  const maxLen = Math.max(targetLen, typedLen);
 
-  let matches = 0;
-  const minLen = Math.min(targetLen, typedLen);
+  // Levenshtein Distance Matrix
+  // Rows: typed (0..typedLen), Cols: target (0..targetLen)
+  const matrix = Array(typedLen + 1).fill(null).map(() => Array(targetLen + 1).fill(null));
 
-  // 글자별 비교 (위치 기반)
-  for (let i = 0; i < minLen; i++) {
-    if (target[i] === typed[i]) {
-      matches++;
+  // Initialize first row (typed "") -> distance to target prefix is just prefix length (insertions)
+  // BUT for "prefix matching", we want to find best prefix.
+  // Actually, if typed is "", distance to target "" is 0.
+  // Distance to target "H" is 1 (delete H? No, insert H).
+  // Wait, standard Levenshtein:
+  // typed "" vs target "Hello" -> distance 5 (insert 5 chars).
+
+  for (let j = 0; j <= targetLen; j++) matrix[0][j] = j;
+  for (let i = 0; i <= typedLen; i++) matrix[i][0] = i;
+
+  for (let i = 1; i <= typedLen; i++) {
+    for (let j = 1; j <= targetLen; j++) {
+      const cost = target[j - 1] === typed[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1, // deletion (typed has extra char)
+        matrix[i][j - 1] + 1, // insertion (typed missing char from target)
+        matrix[i - 1][j - 1] + cost // substitution
+      );
     }
   }
 
-  const accuracy = (matches / targetLen) * 100;
-  return Math.round(accuracy * 10) / 10; // 소수점 첫째 자리
+  // Find the minimum distance in the last row (typed vs any prefix of target)
+  // This represents the "errors committed so far" relative to the best matching target part.
+  let minDistance = Infinity;
+
+  // We only consider prefixes that are somewhat close in length to typed.
+  // e.g. if typed length 5, we shouldn't compare to target prefix of length 1 or 50.
+  // But mathematically, min(last_row) works.
+  // However, if we compare "Hel" (len 3) vs "H" (len 1), distance is 2.
+  // vs "He" (len 2), distance 1.
+  // vs "Hel" (len 3), distance 0.
+  // vs "Hell" (len 4), distance 1.
+
+  // We want the minimum distance.
+  minDistance = Math.min(...matrix[typedLen]);
+
+  // Accuracy = (Length Typed - Errors) / Length Typed
+  // If Errors > Length Typed, Accuracy is 0.
+
+  // Edge case: If typed is very short but matches perfectly, minDistance is 0.
+  // Accuracy 100%.
+
+  // What if I typed "Hul" (len 3). Target "Hello".
+  // "Hul" vs "Hel" -> dist 1.
+  // Accuracy (3-1)/3 = 66%.
+
+  const accuracy = (1 - minDistance / typedLen) * 100;
+  return Math.max(0, Math.round(accuracy * 10) / 10);
 };
 
 /**

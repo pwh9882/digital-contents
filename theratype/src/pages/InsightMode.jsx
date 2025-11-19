@@ -90,22 +90,22 @@ const InsightMode = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto min-h-[80vh] flex flex-col">
+    <div className="max-w-6xl mx-auto min-h-[80vh] flex flex-col animate-fade-in">
       {/* Progress Header */}
       <div className="mb-12">
         <div className="flex justify-between items-end mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">Insight Mode</h1>
-            <p className="text-sm text-neutral-500">Discover your inner voice</p>
+            <h1 className="text-2xl font-display font-bold text-text-main">Insight Mode</h1>
+            <p className="text-sm text-text-muted">Discover your inner voice</p>
           </div>
           <div className="text-right">
-            <span className="text-3xl font-bold text-primary-600">{currentIndex + 1}</span>
-            <span className="text-neutral-400 text-lg"> / {insightSentences.length}</span>
+            <span className="text-3xl font-bold text-primary-main">{currentIndex + 1}</span>
+            <span className="text-text-muted text-lg"> / {insightSentences.length}</span>
           </div>
         </div>
-        <div className="w-full bg-neutral-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-bg-highlight rounded-full h-2 overflow-hidden">
           <div
-            className="bg-primary-500 h-2 rounded-full transition-all duration-500 ease-out"
+            className="bg-primary-main h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${((currentIndex + 1) / insightSentences.length) * 100}%` }}
           />
         </div>
@@ -129,11 +129,11 @@ const InsightMode = () => {
                   setSelectedSentence(null);
                   setSelectedSide(null);
                 }}
-                className="mb-4"
+                className="mb-4 text-text-muted hover:text-primary-main"
               >
                 ← Reselect Sentence
               </Button>
-              <h3 className="text-xl font-medium text-neutral-600">
+              <h3 className="text-xl font-medium text-text-main">
                 Type the sentence to confirm your choice
               </h3>
             </div>

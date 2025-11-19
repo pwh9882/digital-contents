@@ -2,11 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TheraType Global Styles */
+/* TheraType Global Styles & Theme Variables */
 @layer base {
   :root {
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-bg: rgba(255, 255, 255, 0.7);
+    /* Light Mode Variables */
+    --bg-base: #F1F5F9;
+    /* Slate-100 (Darker for better contrast with white cards) */
+    --bg-surface: #FFFFFF;
+    /* White */
+    --bg-surface-rgb: 255, 255, 255;
+    --bg-highlight: #E2E8F0;
+    /* Slate-200 */
+
+    --text-main: #020617;
+    /* Slate-950 (Darker than Slate-900) */
+    --text-muted: #64748B;
+    /* Slate-500 */
+    --text-inverted: #FFFFFF;
+    /* White */
+
+    --border-base: #CBD5E1;
+    /* Slate-300 (Darker than Slate-200 for better visibility) */
+    --border-highlight: #94A3B8;
+    /* Slate-400 */
+
+    /* Brand Colors - Light */
+    --primary-main: #2563EB;
+    /* Blue-600 */
+    --primary-hover: #1D4ED8;
+    /* Blue-700 */
+    --primary-light: #EFF6FF;
+    /* Blue-50 */
+    --primary-contrast: #FFFFFF;
+
+    --secondary-main: #0D9488;
+    /* Teal-600 */
+    --secondary-hover: #0F766E;
+    /* Teal-700 */
+    --secondary-light: #F0FDFA;
+    /* Teal-50 */
+    --secondary-contrast: #FFFFFF;
+
+    /* Status */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+  }
+
+  /* Dark Mode Variables */
+  .dark {
+    --bg-base: #0F172A;
+    /* Slate-900 */
+    --bg-surface: #1E293B;
+    /* Slate-800 */
+    --bg-surface-rgb: 30, 41, 59;
+    --bg-highlight: #334155;
+    /* Slate-700 */
+
+    --text-main: #F8FAFC;
+    /* Slate-50 */
+    --text-muted: #94A3B8;
+    /* Slate-400 */
+    --text-inverted: #0F172A;
+    /* Slate-900 */
+
+    --border-base: #334155;
+    /* Slate-700 */
+    --border-highlight: #475569;
+    /* Slate-600 */
+
+    /* Brand Colors - Dark (Slightly lighter for visibility) */
+    --primary-main: #3B82F6;
+    /* Blue-500 */
+    --primary-hover: #60A5FA;
+    /* Blue-400 */
+    --primary-light: #1E3A8A;
+    /* Blue-900 */
+
+    --secondary-main: #14B8A6;
+    /* Teal-500 */
+    --secondary-hover: #2DD4BF;
+    /* Teal-400 */
+    --secondary-light: #134E4A;
+    /* Teal-900 */
   }
 
   html {
@@ -15,8 +94,27 @@
     scroll-behavior: smooth;
   }
 
+  /* Global Transition for smooth theme switching */
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
   body {
-    @apply m-0 font-sans text-neutral-800 bg-neutral-50 antialiased selection:bg-primary-200 selection:text-primary-900;
+    margin: 0;
+    font-family: theme('fontFamily.sans');
+    color: var(--text-main);
+    background-color: var(--bg-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body::selection {
+    background-color: var(--primary-light);
+    color: var(--primary-main);
   }
 
   #root {
@@ -29,19 +127,34 @@
   h4,
   h5,
   h6 {
-    @apply font-sans font-bold tracking-tight text-neutral-900;
+    font-family: theme('fontFamily.display');
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
   }
 }
 
 @layer components {
 
-  /* Glassmorphism Utilities */
+  /* Glassmorphism Utilities - Adaptive */
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-lg border border-white/50 shadow-soft;
+    @apply backdrop-blur-lg shadow-soft dark:shadow-dark-soft;
+    background-color: rgba(var(--bg-surface-rgb), 0.7);
+    border: 1px solid var(--border-base);
+  }
+
+  .dark .glass-panel {
+    background-color: rgba(var(--bg-surface-rgb), 0.5);
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300;
+    background-color: rgba(var(--bg-surface-rgb), 0.8);
+    border: 1px solid var(--border-base);
+  }
+
+  .dark .glass-card {
+    background-color: rgba(var(--bg-surface-rgb), 0.6);
   }
 
   /* Custom scrollbar */
@@ -54,7 +167,13 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-neutral-300 rounded-full hover:bg-neutral-400 transition-colors;
+    background-color: var(--border-highlight);
+    border-radius: 9999px;
+    transition: background-color 300ms;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-muted);
   }
 }
 

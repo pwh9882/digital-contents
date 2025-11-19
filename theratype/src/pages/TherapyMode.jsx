@@ -93,14 +93,14 @@ const TherapyMode = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900">
+          <h1 className="text-3xl font-display font-bold text-text-main">
             Therapy Session
           </h1>
-          <p className="text-neutral-500">
+          <p className="text-text-muted">
             {isDemoMode ? 'Experience the healing power of typing.' : 'Your personalized daily practice.'}
           </p>
         </div>
@@ -109,14 +109,14 @@ const TherapyMode = () => {
 
       {/* Demo Mode Banner */}
       {isDemoMode && (
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 dark:from-primary-900/20 dark:to-secondary-900/20 dark:border-primary-800">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-xl">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-xl dark:bg-bg-base dark:text-primary-400">
               💡
             </div>
             <div>
-              <h3 className="font-bold text-primary-900">Demo Mode Active</h3>
-              <p className="text-sm text-primary-700">
+              <h3 className="font-bold text-primary-main">Demo Mode Active</h3>
+              <p className="text-sm text-text-muted">
                 Complete the Insight Mode to unlock your personalized therapeutic profile.
               </p>
             </div>

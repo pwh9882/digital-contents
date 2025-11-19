@@ -4,25 +4,48 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       colors: {
-        // Primary: Deep Serenity Blue (Focus, Trust)
+        // Semantic Colors mapped to CSS variables
+        bg: {
+          base: 'var(--bg-base)',
+          surface: 'var(--bg-surface)',
+          highlight: 'var(--bg-highlight)',
+        },
+        text: {
+          main: 'var(--text-main)',
+          muted: 'var(--text-muted)',
+          inverted: 'var(--text-inverted)',
+        },
+        border: {
+          base: 'var(--border-base)',
+          highlight: 'var(--border-highlight)',
+        },
+        // Brand Colors
         primary: {
+          DEFAULT: 'var(--primary-main)',
+          hover: 'var(--primary-hover)',
+          light: 'var(--primary-light)',
+          contrast: 'var(--primary-contrast)',
+          // Keep literal values for specific shades if needed, but prefer semantic
           50: '#F0F7FF',
           100: '#E0EFFF',
           200: '#B8DAFF',
           300: '#85C0FF',
           400: '#4D9FFF',
-          500: '#1A7FFF', // Main Brand Color
+          500: '#1A7FFF',
           600: '#0062D6',
           700: '#004EB3',
           800: '#004294',
           900: '#00387A',
-          950: '#00234D',
         },
-        // Secondary: Soft Sage / Teal (Healing, Growth)
         secondary: {
+          DEFAULT: 'var(--secondary-main)',
+          hover: 'var(--secondary-hover)',
+          light: 'var(--secondary-light)',
+          contrast: 'var(--secondary-contrast)',
           50: '#F2FBF9',
           100: '#DFF7F2',
           200: '#BFECE4',
@@ -33,32 +56,17 @@ export default {
           700: '#266F66',
           800: '#225953',
           900: '#204A46',
-          950: '#0F2D2B',
         },
-        // Neutral: Warm Gray (Comfort)
-        neutral: {
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
-          950: '#030712',
-        },
-        // Semantic Colors
-        success: '#10B981', // Emerald 500
-        warning: '#F59E0B', // Amber 500
-        error: '#EF4444',   // Red 500
-        info: '#3B82F6',    // Blue 500
+        // Status
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        error: 'var(--error)',
+        info: 'var(--info)',
       },
       fontFamily: {
         sans: ['Inter', 'Pretendard', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-        display: ['Outfit', 'sans-serif'], // For headings if needed
+        display: ['Outfit', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
@@ -83,6 +91,7 @@ export default {
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
         'glow': '0 0 15px rgba(26, 127, 255, 0.3)',
+        'dark-soft': '0 4px 20px -2px rgba(0, 0, 0, 0.3)',
       },
     },
   },

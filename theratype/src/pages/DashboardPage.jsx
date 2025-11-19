@@ -31,9 +31,6 @@ const DashboardPage = () => {
             try {
                 const parsed = JSON.parse(insightResults);
                 if (parsed.assignedProfile) {
-                    // Assuming assignedProfile is a key, we'd need the actual name, 
-                    // but for now let's just use the key or a default
-                    // In a real app we'd import therapySentences to get the name
                     insightDone = true;
                 }
             } catch (e) {
@@ -84,8 +81,8 @@ const DashboardPage = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-neutral-900 mb-2">Dashboard</h1>
-                    <p className="text-neutral-500">Track your progress and mental wellness journey.</p>
+                    <h1 className="text-3xl font-bold text-text-main mb-2">Dashboard</h1>
+                    <p className="text-text-muted">Track your progress and mental wellness journey.</p>
                 </div>
                 <div className="flex gap-3">
                     <Link to="/therapy">
@@ -97,20 +94,20 @@ const DashboardPage = () => {
             {/* Stats Overview */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card variant="elevated" className="p-6 text-center">
-                    <div className="text-3xl font-bold text-primary-600 mb-1">{stats.totalSessions}</div>
-                    <div className="text-xs text-neutral-500 uppercase tracking-wider">Total Sessions</div>
+                    <div className="text-3xl font-bold text-primary-main mb-1">{stats.totalSessions}</div>
+                    <div className="text-xs text-text-muted uppercase tracking-wider">Total Sessions</div>
                 </Card>
                 <Card variant="elevated" className="p-6 text-center">
-                    <div className="text-3xl font-bold text-secondary-600 mb-1">{stats.avgWpm}</div>
-                    <div className="text-xs text-neutral-500 uppercase tracking-wider">Avg WPM</div>
+                    <div className="text-3xl font-bold text-secondary-main mb-1">{stats.avgWpm}</div>
+                    <div className="text-xs text-text-muted uppercase tracking-wider">Avg WPM</div>
                 </Card>
                 <Card variant="elevated" className="p-6 text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-1">{stats.avgAccuracy}%</div>
-                    <div className="text-xs text-neutral-500 uppercase tracking-wider">Avg Accuracy</div>
+                    <div className="text-3xl font-bold text-info mb-1">{stats.avgAccuracy}%</div>
+                    <div className="text-xs text-text-muted uppercase tracking-wider">Avg Accuracy</div>
                 </Card>
                 <Card variant="elevated" className="p-6 text-center">
                     <div className="text-3xl font-bold text-purple-600 mb-1">{stats.totalTime}m</div>
-                    <div className="text-xs text-neutral-500 uppercase tracking-wider">Focus Time</div>
+                    <div className="text-xs text-text-muted uppercase tracking-wider">Focus Time</div>
                 </Card>
             </div>
 
@@ -122,28 +119,28 @@ const DashboardPage = () => {
                         {recentActivity.length > 0 ? (
                             <div className="space-y-4">
                                 {recentActivity.map((item) => (
-                                    <div key={item.id} className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl border border-neutral-100 hover:border-primary-200 transition-colors">
+                                    <div key={item.id} className="flex items-center justify-between p-4 bg-bg-highlight rounded-xl border border-border-base hover:border-primary-200 transition-colors">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary-main">
                                                 🌿
                                             </div>
                                             <div>
-                                                <h4 className="font-medium text-neutral-800">{item.type}</h4>
-                                                <p className="text-xs text-neutral-500">{item.date}</p>
+                                                <h4 className="font-medium text-text-main">{item.type}</h4>
+                                                <p className="text-xs text-text-muted">{item.date}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${item.status === 'Mastered' ? 'bg-green-100 text-green-600' : 'bg-neutral-100 text-neutral-500'
+                                            <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${item.status === 'Mastered' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-bg-highlight text-text-muted'
                                                 }`}>
                                                 {item.status}
                                             </span>
-                                            <p className="text-xs text-neutral-500 mt-1">{item.score}</p>
+                                            <p className="text-xs text-text-muted mt-1">{item.score}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center h-48 text-neutral-400">
+                            <div className="flex flex-col items-center justify-center h-48 text-text-muted">
                                 <span className="text-4xl mb-2">📭</span>
                                 <p>No recent activity found.</p>
                                 <Link to="/therapy" className="mt-4">
@@ -156,7 +153,7 @@ const DashboardPage = () => {
 
                 {/* Right Column: Profile & Goals */}
                 <div className="lg:col-span-1 space-y-8">
-                    <Card className="bg-gradient-to-br from-primary-500 to-primary-700 text-white border-none">
+                    <Card className="bg-gradient-to-br from-primary-main to-primary-700 text-white border-none">
                         <div className="text-center p-6">
                             <div className="w-20 h-20 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-3xl mb-4 border-2 border-white/30">
                                 👤
@@ -174,7 +171,7 @@ const DashboardPage = () => {
                             )}
 
                             <Link to="/insight">
-                                <Button variant="ghost" className="w-full bg-white text-primary-600 hover:bg-primary-50">
+                                <Button variant="ghost" className="w-full bg-white text-primary-main hover:bg-primary-light">
                                     {stats.insightCompleted ? 'Retake Insight Analysis' : 'Start Insight Mode'}
                                 </Button>
                             </Link>
@@ -184,16 +181,16 @@ const DashboardPage = () => {
                     <Card title="Weekly Goals">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-5 h-5 rounded-full border-2 border-neutral-200 flex items-center justify-center"></div>
-                                <span className="text-sm text-neutral-600">Complete 3 sessions</span>
+                                <div className="w-5 h-5 rounded-full border-2 border-border-base flex items-center justify-center"></div>
+                                <span className="text-sm text-text-muted">Complete 3 sessions</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-5 h-5 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center text-white text-xs">✓</div>
-                                <span className="text-sm text-neutral-400 line-through">Achieve 95% accuracy</span>
+                                <span className="text-sm text-text-muted line-through">Achieve 95% accuracy</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-5 h-5 rounded-full border-2 border-neutral-200 flex items-center justify-center"></div>
-                                <span className="text-sm text-neutral-600">Type for 15 minutes</span>
+                                <div className="w-5 h-5 rounded-full border-2 border-border-base flex items-center justify-center"></div>
+                                <span className="text-sm text-text-muted">Type for 15 minutes</span>
                             </div>
                         </div>
                     </Card>

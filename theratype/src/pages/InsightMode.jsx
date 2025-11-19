@@ -4,6 +4,7 @@ import { assignProfile } from '../data/therapySentences';
 import SentencePair from '../components/insight/SentencePair';
 import TypingInput from '../components/insight/TypingInput';
 import InsightResult from '../components/insight/InsightResult';
+import Button from '../components/common/Button';
 
 const InsightMode = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,7 +14,7 @@ const InsightMode = () => {
   const [isComplete, setIsComplete] = useState(false);
 
   const currentPair = insightSentences[currentIndex];
-  const progress = ((currentIndex + 1) / insightSentences.length) * 100;
+  const progress = ((currentIndex) / insightSentences.length) * 100;
 
   // Keyboard navigation
   useEffect(() => {
@@ -72,11 +73,8 @@ const InsightMode = () => {
         categoryScores[category] += choice.weight;
       });
 
-      // 프로파일 할당 (therapySentences.js의 assignProfile 함수 사용)
+      // 프로파일 할당
       const assignedProfile = assignProfile(categoryScores);
-      console.log('Category Scores:', categoryScores);
-      console.log('Assigned Profile:', assignedProfile);
-      console.log('Selections:', updatedSelections);
 
       setIsComplete(true);
       localStorage.setItem('insightResults', JSON.stringify({
@@ -88,31 +86,33 @@ const InsightMode = () => {
   };
 
   if (isComplete) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 p-6">
-        <InsightResult selections={selections} />
-      </div>
-    );
+    return <InsightResult selections={selections} />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-primary-700">Insight Mode</h1>
-            <div className="text-neutral-600">
-              {currentIndex + 1} / {insightSentences.length}
-            </div>
+    <div className="max-w-6xl mx-auto min-h-[80vh] flex flex-col">
+      {/* Progress Header */}
+      <div className="mb-12">
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-neutral-900">Insight Mode</h1>
+            <p className="text-sm text-neutral-500">Discover your inner voice</p>
           </div>
-          <div className="w-full bg-neutral-200 rounded-full h-3">
-            <div
-              className="bg-primary-600 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="text-right">
+            <span className="text-3xl font-bold text-primary-600">{currentIndex + 1}</span>
+            <span className="text-neutral-400 text-lg"> / {insightSentences.length}</span>
           </div>
         </div>
+        <div className="w-full bg-neutral-100 rounded-full h-2 overflow-hidden">
+          <div
+            className="bg-primary-500 h-2 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${((currentIndex + 1) / insightSentences.length) * 100}%` }}
+          />
+        </div>
+      </div>
 
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col justify-center">
         {!selectedSentence ? (
           <SentencePair
             pairData={currentPair}
@@ -120,14 +120,22 @@ const InsightMode = () => {
             selectedChoice={selectedSide}
           />
         ) : (
-          <div className="bg-white rounded-xl p-8 shadow-lg animate-fade-in-up">
-            <div className="mb-6 text-center">
-              <span className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-2">
-                선택한 문장을 입력하여 확정하세요
-              </span>
-              <p className="text-neutral-500 text-sm">
-                (다른 문장을 선택하려면 ESC를 누르세요)
-              </p>
+          <div className="animate-fade-in-up">
+            <div className="mb-8 text-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedSentence(null);
+                  setSelectedSide(null);
+                }}
+                className="mb-4"
+              >
+                ← Reselect Sentence
+              </Button>
+              <h3 className="text-xl font-medium text-neutral-600">
+                Type the sentence to confirm your choice
+              </h3>
             </div>
             <TypingInput
               targetSentence={selectedSentence}

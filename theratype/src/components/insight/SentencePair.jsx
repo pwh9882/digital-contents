@@ -2,61 +2,72 @@ import Card from '../common/Card';
 
 const SentencePair = ({ pairData, onSelect, selectedChoice }) => {
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <span className="inline-block px-4 py-1.5 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold tracking-wide uppercase">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
+      <div className="text-center mb-12">
+        <span className="inline-block px-4 py-1.5 bg-primary-50 text-primary-600 rounded-full text-sm font-medium tracking-wide uppercase mb-4">
           {pairData.categoryName}
         </span>
-        <h2 className="text-2xl font-bold text-neutral-800 mt-4">
-          어느 문장이 더 마음에 와닿나요?
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-neutral-900">
+          Which resonates with you more?
         </h2>
+        <p className="text-neutral-500 mt-2">
+          Select the sentence that best reflects your current state.
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl px-4">
         {/* Option A (Left) */}
-        <div className="relative group">
+        <div
+          className={`relative group transition-all duration-500 ${selectedChoice === 'B' ? 'opacity-50 scale-95 blur-[1px]' : 'opacity-100'
+            }`}
+        >
           <Card
-            variant={selectedChoice === 'A' ? 'outlined' : 'elevated'}
+            variant={selectedChoice === 'A' ? 'elevated' : 'outlined'}
             onClick={() => onSelect('A')}
-            className={`h-full flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 transform ${selectedChoice === 'A'
-                ? 'border-primary-500 border-2 ring-4 ring-primary-100 shadow-xl scale-[1.02]'
-                : 'hover:shadow-xl hover:-translate-y-1 border-transparent border-2'
+            className={`h-64 md:h-80 flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 relative overflow-hidden ${selectedChoice === 'A'
+                ? 'ring-4 ring-primary-100 border-primary-500 shadow-glow'
+                : 'hover:border-primary-300 hover:shadow-lg'
               }`}
           >
-            <div className="text-center">
-              <div className="text-xl font-medium text-neutral-800 leading-relaxed">
-                {pairData.pairA.text}
+            <div className={`absolute top-0 left-0 w-full h-1 bg-primary-500 transition-transform duration-300 ${selectedChoice === 'A' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+
+            <div className="text-center z-10">
+              <div className="text-xl md:text-2xl font-medium text-neutral-800 leading-relaxed font-display">
+                "{pairData.pairA.text}"
               </div>
             </div>
 
             {/* Keyboard Hint */}
-            <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 text-xs font-bold text-neutral-400 transition-opacity duration-300 ${selectedChoice ? 'opacity-0' : 'opacity-50 group-hover:opacity-100'
-              }`}>
-              <span className="bg-neutral-100 px-2 py-1 rounded border border-neutral-200">← Left</span>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Press <kbd className="mx-1 px-2 py-1 bg-neutral-100 rounded border border-neutral-200 font-mono text-neutral-600">←</kbd> or <kbd className="mx-1 px-2 py-1 bg-neutral-100 rounded border border-neutral-200 font-mono text-neutral-600">1</kbd>
             </div>
           </Card>
         </div>
 
         {/* Option B (Right) */}
-        <div className="relative group">
+        <div
+          className={`relative group transition-all duration-500 ${selectedChoice === 'A' ? 'opacity-50 scale-95 blur-[1px]' : 'opacity-100'
+            }`}
+        >
           <Card
-            variant={selectedChoice === 'B' ? 'outlined' : 'elevated'}
+            variant={selectedChoice === 'B' ? 'elevated' : 'outlined'}
             onClick={() => onSelect('B')}
-            className={`h-full flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 transform ${selectedChoice === 'B'
-                ? 'border-primary-500 border-2 ring-4 ring-primary-100 shadow-xl scale-[1.02]'
-                : 'hover:shadow-xl hover:-translate-y-1 border-transparent border-2'
+            className={`h-64 md:h-80 flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 relative overflow-hidden ${selectedChoice === 'B'
+                ? 'ring-4 ring-secondary-100 border-secondary-500 shadow-glow'
+                : 'hover:border-secondary-300 hover:shadow-lg'
               }`}
           >
-            <div className="text-center">
-              <div className="text-xl font-medium text-neutral-800 leading-relaxed">
-                {pairData.pairB.text}
+            <div className={`absolute top-0 left-0 w-full h-1 bg-secondary-500 transition-transform duration-300 ${selectedChoice === 'B' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+
+            <div className="text-center z-10">
+              <div className="text-xl md:text-2xl font-medium text-neutral-800 leading-relaxed font-display">
+                "{pairData.pairB.text}"
               </div>
             </div>
 
             {/* Keyboard Hint */}
-            <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 text-xs font-bold text-neutral-400 transition-opacity duration-300 ${selectedChoice ? 'opacity-0' : 'opacity-50 group-hover:opacity-100'
-              }`}>
-              <span className="bg-neutral-100 px-2 py-1 rounded border border-neutral-200">Right →</span>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Press <kbd className="mx-1 px-2 py-1 bg-neutral-100 rounded border border-neutral-200 font-mono text-neutral-600">→</kbd> or <kbd className="mx-1 px-2 py-1 bg-neutral-100 rounded border border-neutral-200 font-mono text-neutral-600">2</kbd>
             </div>
           </Card>
         </div>

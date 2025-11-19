@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import TypingInput from '../insight/TypingInput';
+import Button from '../common/Button';
+import Card from '../common/Card';
 
 const TherapySentence = ({ sentence, onComplete }) => {
   const [showResult, setShowResult] = useState(false);
@@ -14,7 +16,6 @@ const TherapySentence = ({ sentence, onComplete }) => {
     });
     setShowResult(true);
 
-    // 결과를 부모 컴포넌트로 전달
     onComplete({
       sentenceId: sentence.id,
       wpm: sessionData.wpm,
@@ -31,85 +32,75 @@ const TherapySentence = ({ sentence, onComplete }) => {
 
   if (showResult && lastResult) {
     return (
-      <div className="space-y-6">
-        <div className={`p-8 rounded-lg text-center ${
-          lastResult.isSuccess ? 'bg-green-50 border-2 border-green-500' : 'bg-yellow-50 border-2 border-yellow-500'
-        }`}>
-          <div className="text-6xl mb-4">
-            {lastResult.isSuccess ? '🎉' : '💪'}
+      <div className="flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-4 animate-bounce">
+            {lastResult.isSuccess ? '🌿' : '🌱'}
           </div>
-          <h3 className="text-2xl font-bold mb-2">
-            {lastResult.isSuccess ? '마스터 성공!' : '좋은 시도!'}
+          <h3 className="text-3xl font-bold text-neutral-800 mb-2">
+            {lastResult.isSuccess ? 'Excellent Flow' : 'Growing Stronger'}
           </h3>
-          <p className="text-neutral-700 mb-6">
+          <p className="text-neutral-500">
             {lastResult.isSuccess
-              ? '이 문장을 성공적으로 완료했습니다!'
-              : '조금만 더 연습하면 마스터할 수 있어요!'}
+              ? 'You have mastered this thought pattern.'
+              : 'Every keystroke brings you closer to mastery.'}
           </p>
-
-          <div className="flex justify-center gap-8 mb-6">
-            <div>
-              <div className={`text-4xl font-bold ${
-                lastResult.wpm >= 20 ? 'text-green-600' : 'text-yellow-600'
-              }`}>
-                {lastResult.wpm}
-              </div>
-              <div className="text-sm text-neutral-600">WPM {lastResult.wpm >= 20 && '✓'}</div>
-            </div>
-            <div>
-              <div className={`text-4xl font-bold ${
-                lastResult.accuracy >= 90 ? 'text-green-600' : 'text-yellow-600'
-              }`}>
-                {lastResult.accuracy}%
-              </div>
-              <div className="text-sm text-neutral-600">정확도 {lastResult.accuracy >= 90 && '✓'}</div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
-          >
-            다음 문장 연습하기
-          </button>
         </div>
+
+        <div className="grid grid-cols-2 gap-6 mb-8 w-full max-w-md">
+          <Card variant="flat" className="bg-neutral-50 text-center p-4">
+            <div className={`text-3xl font-bold font-mono ${lastResult.wpm >= 20 ? 'text-primary-600' : 'text-neutral-600'
+              }`}>
+              {lastResult.wpm}
+            </div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider mt-1">WPM</div>
+          </Card>
+          <Card variant="flat" className="bg-neutral-50 text-center p-4">
+            <div className={`text-3xl font-bold font-mono ${lastResult.accuracy >= 90 ? 'text-secondary-600' : 'text-neutral-600'
+              }`}>
+              {lastResult.accuracy}%
+            </div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider mt-1">Accuracy</div>
+          </Card>
+        </div>
+
+        <Button
+          variant={lastResult.isSuccess ? 'primary' : 'outline'}
+          size="lg"
+          onClick={handleNext}
+          className="min-w-[200px]"
+        >
+          {lastResult.isSuccess ? 'Next Reflection' : 'Try Again'}
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* 문장 표시 */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-neutral-800 mb-4 leading-relaxed">
-          {sentence.text}
+    <div className="space-y-8 animate-fade-in">
+      {/* Context Header */}
+      <div className="text-center space-y-2">
+        <span className="inline-block px-3 py-1 bg-primary-50 text-primary-600 rounded-full text-xs font-bold uppercase tracking-wider">
+          Therapeutic Focus
+        </span>
+        <h2 className="text-xl font-medium text-neutral-600">
+          {sentence.therapeuticIntent}
         </h2>
-        <div className="space-y-2">
-          <p className="text-sm text-neutral-600">
-            <strong>치료적 목적:</strong> {sentence.therapeuticIntent}
-          </p>
-          <p className="text-xs text-neutral-500">
-            <strong>과학적 근거:</strong> {sentence.scientificBasis}
-          </p>
-        </div>
       </div>
 
-      {/* 타이핑 입력 */}
-      <TypingInput
-        targetSentence={sentence.text}
-        onComplete={handleComplete}
-      />
+      {/* Typing Area */}
+      <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 p-8 md:p-12">
+        <TypingInput
+          targetSentence={sentence.text}
+          onComplete={handleComplete}
+        />
+      </div>
 
-      {/* 성공 기준 안내 */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="text-sm font-bold text-blue-800 mb-2">
-          마스터 목표
-        </h4>
-        <div className="flex gap-4 text-xs text-blue-700">
-          <span>✓ 정확도 90% 이상</span>
-          <span>✓ 속도 20 WPM 이상</span>
-          <span>✓ 3회 성공</span>
-        </div>
+      {/* Scientific Basis (Subtle) */}
+      <div className="text-center max-w-2xl mx-auto">
+        <p className="text-xs text-neutral-400 leading-relaxed">
+          <span className="font-bold text-neutral-500">Scientific Basis:</span> {sentence.scientificBasis}
+        </p>
       </div>
     </div>
   );

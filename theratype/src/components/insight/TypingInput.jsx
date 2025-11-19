@@ -75,48 +75,60 @@ const TypingInput = ({ targetSentence, onComplete }) => {
   const feedback = getCharacterFeedback(targetSentence, typedText);
 
   return (
-    <div className="space-y-6">
-      <div className="bg-neutral-50 p-6 rounded-lg border-2 border-neutral-200">
-        <div className="text-2xl font-mono leading-relaxed">
+    <div className="space-y-8 w-full max-w-3xl mx-auto">
+      {/* Target Sentence Display */}
+      <div className="relative p-8 bg-white rounded-2xl shadow-soft border border-neutral-100 text-center">
+        <div className="text-2xl md:text-3xl font-display font-medium leading-relaxed tracking-tight">
           {targetSentence.split('').map((char, index) => {
-            let colorClass = 'text-neutral-400';
+            let colorClass = 'text-neutral-300';
+            let borderClass = '';
+
+            // Current cursor position indicator
+            const isCurrent = index === typedText.length;
+
             if (feedback[index] === 'correct') {
-              colorClass = 'text-green-600';
+              colorClass = 'text-neutral-800 transition-colors duration-200';
             } else if (feedback[index] === 'incorrect') {
-              colorClass = 'text-red-600';
+              colorClass = 'text-error bg-red-50 rounded';
             }
 
             return (
-              <span key={index} className={colorClass}>
+              <span key={index} className={`relative ${colorClass}`}>
                 {char}
+                {isCurrent && (
+                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-500 animate-pulse" />
+                )}
               </span>
             );
           })}
         </div>
       </div>
 
-      <div>
+      {/* Input Field */}
+      <div className="relative">
         <input
           ref={inputRef}
           type="text"
           value={typedText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="w-full px-4 py-3 text-lg border-2 border-primary-300 rounded-lg focus:outline-none focus:border-primary-500"
-          placeholder="위 문장을 입력하세요..."
+          className="w-full px-6 py-4 text-xl text-center bg-transparent border-b-2 border-neutral-200 focus:border-primary-500 focus:outline-none transition-colors placeholder-neutral-300 font-medium"
+          placeholder="Type the sentence above..."
           autoComplete="off"
           spellCheck="false"
         />
       </div>
 
-      <div className="flex justify-around text-center">
-        <div>
-          <div className="text-3xl font-bold text-primary-600">{wpm}</div>
-          <div className="text-sm text-neutral-600">WPM</div>
+      {/* Stats */}
+      <div className="flex justify-center gap-12 pt-4">
+        <div className="text-center">
+          <div className="text-3xl font-bold text-primary-600 font-mono">{wpm}</div>
+          <div className="text-xs uppercase tracking-wider text-neutral-400 font-medium mt-1">WPM</div>
         </div>
-        <div>
-          <div className="text-3xl font-bold text-secondary-600">{accuracy}%</div>
-          <div className="text-sm text-neutral-600">정확도</div>
+        <div className="w-px bg-neutral-200 h-12" />
+        <div className="text-center">
+          <div className="text-3xl font-bold text-secondary-600 font-mono">{accuracy}%</div>
+          <div className="text-xs uppercase tracking-wider text-neutral-400 font-medium mt-1">Accuracy</div>
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import Card from './components/common/Card';
 import MainHub from './pages/MainHub';
 import InsightMode from './pages/InsightMode';
 import TherapyMode from './pages/TherapyMode';
+import Layout from './components/layout/Layout';
 
 // 임시 페이지 컴포넌트들 (추후 실제 페이지로 교체)
 // LandingPage는 MainHub로 대체됨 (주석 처리, 필요시 복원 가능)
@@ -42,25 +43,19 @@ import TherapyMode from './pages/TherapyMode';
 //   </div>
 // );
 
-const DashboardPage = () => (
-  <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
-    <Card title="Dashboard" className="max-w-4xl">
-      <p className="text-neutral-700">
-        진행 추적 대시보드 (구현 예정)
-      </p>
-    </Card>
-  </div>
-);
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<MainHub />} />
-        <Route path="/insight" element={<InsightMode />} />
-        <Route path="/therapy" element={<TherapyMode />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<MainHub />} />
+          <Route path="/insight" element={<InsightMode />} />
+          <Route path="/therapy" element={<TherapyMode />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Routes>
+      </Layout>
     </Router>
   );
 }

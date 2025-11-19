@@ -1,46 +1,41 @@
-/**
- * Card 컴포넌트
- *
- * @description 콘텐츠를 담는 카드 컴포넌트
- * @param {ReactNode} children - 카드 내용
- * @param {string} title - 카드 제목
- * @param {string} variant - 'default' | 'elevated' | 'outlined'
- * @param {function} onClick - 클릭 핸들러 (선택적, 있으면 hover 효과 추가)
- */
+import React from 'react';
 
 const Card = ({
   children,
-  title,
-  variant = 'default',
-  onClick,
   className = '',
+  title,
+  subtitle,
+  variant = 'elevated', // elevated, outlined, flat
+  padding = 'md', // none, sm, md, lg
+  onClick,
   ...props
 }) => {
-  // Variant별 스타일
-  const variantStyles = {
-    default: 'bg-white border border-neutral-200',
-    elevated: 'bg-white shadow-md hover:shadow-lg',
-    outlined: 'bg-white border-2 border-primary-200',
+
+  const variants = {
+    elevated: "bg-white shadow-soft border border-neutral-100",
+    outlined: "bg-white border border-neutral-200",
+    flat: "bg-neutral-50 border border-transparent",
+    glass: "glass-card",
   };
 
-  // 클릭 가능한 경우 추가 스타일
-  const interactiveStyles = onClick
-    ? 'cursor-pointer hover:scale-[1.02] transition-transform duration-200'
-    : '';
-
-  const cardClassName = [
-    'rounded-xl p-6',
-    variantStyles[variant],
-    interactiveStyles,
-    className,
-  ].join(' ');
+  const paddings = {
+    none: "",
+    sm: "p-4",
+    md: "p-6",
+    lg: "p-8",
+  };
 
   return (
-    <div className={cardClassName} onClick={onClick} {...props}>
-      {title && (
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-          {title}
-        </h3>
+    <div
+      className={`rounded-2xl transition-all ${variants[variant]} ${paddings[padding]} ${className} ${onClick ? 'cursor-pointer hover:shadow-md' : ''}`}
+      onClick={onClick}
+      {...props}
+    >
+      {(title || subtitle) && (
+        <div className="mb-4">
+          {title && <h3 className="text-lg font-bold text-neutral-800">{title}</h3>}
+          {subtitle && <p className="text-sm text-neutral-500 mt-1">{subtitle}</p>}
+        </div>
       )}
       {children}
     </div>

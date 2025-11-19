@@ -1,17 +1,27 @@
 import { useEffect, useState } from 'react';
 import { modesConfig } from '../data/modesConfig';
 import ModeCard from '../components/hub/ModeCard';
+import Card from '../components/common/Card';
+import Button from '../components/common/Button';
+import { Link } from 'react-router-dom';
 
 /**
  * MainHub Page
  *
  * TheraType의 중앙 허브 페이지
- * 모든 모드를 선택할 수 있는 메인 화면
+ * "Your Personal Growth Space" 컨셉으로 재설계
  */
 const MainHub = () => {
   const [progressData, setProgressData] = useState({});
+  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
+    // 시간대에 따른 인사말 설정
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good Morning');
+    else if (hour < 18) setGreeting('Good Afternoon');
+    else setGreeting('Good Evening');
+
     // localStorage에서 진행 상태 확인
     const insightResults = localStorage.getItem('insightResults');
     const therapySessions = localStorage.getItem('therapySessions');
@@ -52,68 +62,106 @@ const MainHub = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-primary-700 mb-4 tracking-tight">
-            TheraType
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h1 className="text-4xl font-bold text-neutral-900 mb-2">
+            {greeting}, Traveler
           </h1>
-          <p className="text-xl text-neutral-600 mb-2">
-            타이핑으로 시작하는 마음 케어
-          </p>
-          <p className="text-sm text-neutral-500">
-            Therapeutic Typing Platform
-          </p>
-        </header>
-
-        {/* Welcome Message */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md p-6 mb-12 max-w-3xl mx-auto border border-primary-100">
-          <p className="text-center text-neutral-700 leading-relaxed">
-            원하는 모드를 선택해서 시작해보세요.{' '}
-            <span className="font-semibold text-primary-600">
-              Insight Mode
-            </span>
-            로 나를 이해하고,{' '}
-            <span className="font-semibold text-green-600">Therapy Mode</span>로
-            마음을 치유하세요.
+          <p className="text-neutral-500 text-lg">
+            오늘도 당신의 마음을 들여다볼 준비가 되었나요?
           </p>
         </div>
+        <div className="hidden md:block">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-sm font-medium">
+            <span className="w-2 h-2 rounded-full bg-primary-500 mr-2 animate-pulse"></span>
+            System Operational
+          </span>
+        </div>
+      </div>
 
-        {/* Modes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {/* Daily Quote / Mood Section */}
+      <Card variant="elevated" className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-none relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary-400 opacity-20 rounded-full -ml-10 -mb-10 blur-2xl"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-3 opacity-90">
+              <span className="text-xl">✨</span>
+              <span className="font-medium tracking-wide text-sm uppercase">Daily Inspiration</span>
+            </div>
+            <blockquote className="text-2xl md:text-3xl font-display font-bold leading-tight mb-4">
+              "The only journey is the one within."
+            </blockquote>
+            <cite className="not-italic opacity-80 font-medium">- Rainer Maria Rilke</cite>
+          </div>
+          <div className="flex-shrink-0">
+            <Link to="/therapy">
+              <Button className="bg-white text-primary-600 hover:bg-primary-50 border-none shadow-lg">
+                Start Daily Session
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </Card>
+
+      {/* Modes Grid */}
+      <div>
+        <h2 className="text-xl font-bold text-neutral-800 mb-6 flex items-center">
+          <span className="w-1.5 h-6 bg-secondary-500 rounded-full mr-3"></span>
+          Available Modules
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modesConfig.map((mode) => {
-            // Get progress data for this mode
             const modeProgress = progressData[mode.id] || {};
 
             return (
               <ModeCard
                 key={mode.id}
-                title={mode.title}
-                description={mode.description}
-                longDescription={mode.longDescription}
-                icon={mode.icon}
-                route={mode.route}
-                enabled={mode.enabled}
-                comingSoon={mode.comingSoon}
-                color={mode.color}
+                {...mode}
                 progress={modeProgress.progress || 0}
                 completed={modeProgress.completed || false}
-                requiresProfile={mode.requiresProfile}
               />
             );
           })}
-        </div>
 
-        {/* Footer Info */}
-        <footer className="text-center text-neutral-500 text-sm">
-          <p className="mb-2">
-            🚀 새로운 모드가 곧 추가될 예정입니다
-          </p>
-          <p className="text-xs text-neutral-400">
-            TheraType • Digital Healthcare Platform • 2025
-          </p>
-        </footer>
+          {/* Coming Soon Card */}
+          <Card variant="flat" className="border-dashed border-2 border-neutral-200 flex flex-col items-center justify-center text-center p-8 min-h-[240px] group hover:border-neutral-300 transition-colors">
+            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-2xl mb-4 text-neutral-400 group-hover:scale-110 transition-transform">
+              🚀
+            </div>
+            <h3 className="text-lg font-bold text-neutral-500 mb-2">New Mode</h3>
+            <p className="text-neutral-400 text-sm">
+              More therapeutic modules are currently under development.
+            </p>
+          </Card>
+        </div>
+      </div>
+
+      {/* Recent Activity / Stats Preview (Placeholder) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card title="Weekly Progress">
+          <div className="h-32 flex items-center justify-center text-neutral-400 bg-neutral-50 rounded-xl border border-neutral-100">
+            Chart Placeholder
+          </div>
+        </Card>
+        <Card title="Recent Insights">
+          <div className="space-y-3">
+            {[1, 2].map((_, i) => (
+              <div key={i} className="flex items-center p-3 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer">
+                <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 mr-3">
+                  📝
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-neutral-800">Completed Insight Session</p>
+                  <p className="text-xs text-neutral-500">2 days ago</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
     </div>
   );

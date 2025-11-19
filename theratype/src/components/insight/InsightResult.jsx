@@ -4,8 +4,6 @@ import Card from '../common/Card';
 import { assignProfile, therapySentences } from '../../data/therapySentences';
 
 const InsightResult = ({ selections }) => {
-  console.log('[InsightResult] Received selections:', selections);
-
   const categoryScores = {};
   let totalWpm = 0;
   let totalAccuracy = 0;
@@ -28,8 +26,6 @@ const InsightResult = ({ selections }) => {
 
   const profileKey = assignProfile(categoryScores);
   const profile = therapySentences[profileKey];
-  console.log('[InsightResult] Profile Key:', profileKey);
-  console.log('[InsightResult] Profile:', profile);
 
   const categoryCounts = {};
   selections.forEach(selection => {
@@ -38,58 +34,87 @@ const InsightResult = ({ selections }) => {
   });
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-primary-700 mb-2">
-          분석 완료
+    <div className="max-w-4xl mx-auto space-y-12 animate-fade-in-up pb-12">
+      <div className="text-center space-y-4">
+        <h2 className="text-4xl font-bold text-neutral-900">
+          Analysis Complete
         </h2>
-        <p className="text-neutral-600">
-          당신의 심리 프로파일을 분석했습니다
+        <p className="text-xl text-neutral-500">
+          Here is your personalized therapeutic profile.
         </p>
       </div>
 
-      <Card variant="elevated" className="text-center">
-        <div className="space-y-4">
-          <div className="text-6xl">{profile.icon}</div>
-          <h3 className="text-2xl font-bold" style={{ color: profile.color }}>
-            {profile.profileName}
-          </h3>
-          <p className="text-neutral-700 text-lg">
-            {profile.profileDescription}
-          </p>
-        </div>
-      </Card>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card variant="outlined">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-primary-600">{avgWpm}</div>
-            <div className="text-sm text-neutral-600 mt-2">평균 WPM</div>
-          </div>
-        </Card>
-        <Card variant="outlined">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-secondary-600">{avgAccuracy}%</div>
-            <div className="text-sm text-neutral-600 mt-2">평균 정확도</div>
+      {/* Profile Card */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-100 to-secondary-100 transform -skew-y-2 rounded-3xl opacity-50" />
+        <Card variant="elevated" className="relative z-10 overflow-hidden border-none shadow-xl">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:w-1/3 bg-neutral-50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-neutral-100">
+              <div className="text-8xl mb-6 filter drop-shadow-lg transform hover:scale-110 transition-transform duration-300">
+                {profile.icon}
+              </div>
+              <h3 className="text-2xl font-bold text-center" style={{ color: profile.color }}>
+                {profile.profileName}
+              </h3>
+            </div>
+            <div className="md:w-2/3 p-8 md:p-12 flex flex-col justify-center">
+              <h4 className="text-lg font-semibold text-neutral-400 uppercase tracking-wide mb-4">
+                Profile Description
+              </h4>
+              <p className="text-xl text-neutral-700 leading-relaxed">
+                {profile.profileDescription}
+              </p>
+            </div>
           </div>
         </Card>
       </div>
 
-      <Card title="카테고리별 선택">
-        <div className="space-y-2">
-          {Object.entries(categoryCounts).map(([category, count]) => (
-            <div key={category} className="flex justify-between items-center py-2 border-b border-neutral-100">
-              <span className="text-neutral-700">{category}</span>
-              <span className="text-primary-600 font-medium">{count}개</span>
+      {/* Stats Grid */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card variant="outlined" className="p-6">
+          <h4 className="text-sm font-bold text-neutral-400 uppercase tracking-wide mb-6">
+            Performance Metrics
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-4 bg-neutral-50 rounded-xl">
+              <div className="text-3xl font-bold text-primary-600 font-mono">{avgWpm}</div>
+              <div className="text-xs text-neutral-500 mt-1">Avg WPM</div>
             </div>
-          ))}
-        </div>
-      </Card>
+            <div className="text-center p-4 bg-neutral-50 rounded-xl">
+              <div className="text-3xl font-bold text-secondary-600 font-mono">{avgAccuracy}%</div>
+              <div className="text-xs text-neutral-500 mt-1">Avg Accuracy</div>
+            </div>
+          </div>
+        </Card>
 
-      <div className="text-center">
+        <Card variant="outlined" className="p-6">
+          <h4 className="text-sm font-bold text-neutral-400 uppercase tracking-wide mb-6">
+            Category Breakdown
+          </h4>
+          <div className="space-y-3">
+            {Object.entries(categoryCounts).map(([category, count]) => (
+              <div key={category} className="flex justify-between items-center">
+                <span className="text-neutral-700 font-medium">{category}</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-neutral-100 rounded-full mr-3 overflow-hidden">
+                    <div
+                      className="h-full bg-primary-500 rounded-full"
+                      style={{ width: `${(count / selections.length) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-neutral-500 w-6 text-right">{count}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Action Area */}
+      <div className="flex justify-center pt-8">
         <Link to="/therapy">
-          <Button variant="primary" size="lg">
-            Therapy Mode 시작하기
+          <Button variant="primary" size="xl" className="shadow-xl shadow-primary-500/20 hover:shadow-primary-500/40 transform hover:-translate-y-1 transition-all">
+            Start Therapy Session
           </Button>
         </Link>
       </div>

@@ -7,56 +7,82 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Primary: Deep Serenity Blue (Focus, Trust)
         primary: {
-          50: '#E3F2FD',
-          100: '#BBDEFB',
-          200: '#90CAF9',
-          300: '#64B5F6',
-          400: '#42A5F5',
-          500: '#2196F3',
-          600: '#1E88E5',
-          700: '#1976D2',
-          800: '#1565C0',
-          900: '#0D47A1',
+          50: '#F0F7FF',
+          100: '#E0EFFF',
+          200: '#B8DAFF',
+          300: '#85C0FF',
+          400: '#4D9FFF',
+          500: '#1A7FFF', // Main Brand Color
+          600: '#0062D6',
+          700: '#004EB3',
+          800: '#004294',
+          900: '#00387A',
+          950: '#00234D',
         },
+        // Secondary: Soft Sage / Teal (Healing, Growth)
         secondary: {
-          50: '#F3E5F5',
-          100: '#E1BEE7',
-          200: '#CE93D8',
-          300: '#BA68C8',
-          400: '#AB47BC',
-          500: '#9C27B0',
-          600: '#8E24AA',
-          700: '#7B1FA2',
-          800: '#6A1B9A',
-          900: '#4A148C',
+          50: '#F2FBF9',
+          100: '#DFF7F2',
+          200: '#BFECE4',
+          300: '#94DCD0',
+          400: '#64C6B7',
+          500: '#3FA899',
+          600: '#2D8A7E',
+          700: '#266F66',
+          800: '#225953',
+          900: '#204A46',
+          950: '#0F2D2B',
         },
-        success: '#4CAF50',
-        warning: '#FF9800',
-        error: '#F44336',
+        // Neutral: Warm Gray (Comfort)
         neutral: {
-          50: '#FAFAFA',
-          100: '#F5F5F5',
-          200: '#EEEEEE',
-          300: '#E0E0E0',
-          400: '#BDBDBD',
-          500: '#9E9E9E',
-          600: '#757575',
-          700: '#616161',
-          800: '#424242',
-          900: '#212121',
+          50: '#F9FAFB',
+          100: '#F3F4F6',
+          200: '#E5E7EB',
+          300: '#D1D5DB',
+          400: '#9CA3AF',
+          500: '#6B7280',
+          600: '#4B5563',
+          700: '#374151',
+          800: '#1F2937',
+          900: '#111827',
+          950: '#030712',
         },
+        // Semantic Colors
+        success: '#10B981', // Emerald 500
+        warning: '#F59E0B', // Amber 500
+        error: '#EF4444',   // Red 500
+        info: '#3B82F6',    // Blue 500
       },
       fontFamily: {
-        sans: ['Pretendard', 'system-ui', 'sans-serif'],
-        mono: ['Fira Code', 'Consolas', 'monospace'],
+        sans: ['Inter', 'Pretendard', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        display: ['Outfit', 'sans-serif'], // For headings if needed
       },
-      spacing: {
-        '128': '32rem',
-        '144': '36rem',
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'fade-in-up': 'fadeInUp 0.6s ease-out',
+        'slide-in-right': 'slideInRight 0.4s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
-      borderRadius: {
-        '4xl': '2rem',
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideInRight: {
+          '0%': { opacity: '0', transform: 'translateX(20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+      },
+      boxShadow: {
+        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+        'glow': '0 0 15px rgba(26, 127, 255, 0.3)',
       },
     },
   },

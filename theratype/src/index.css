@@ -4,34 +4,62 @@
 
 /* TheraType Global Styles */
 @layer base {
-  * {
-    @apply box-border;
+  :root {
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply m-0 font-sans text-neutral-900 bg-neutral-50 antialiased;
+    @apply m-0 font-sans text-neutral-800 bg-neutral-50 antialiased selection:bg-primary-200 selection:text-primary-900;
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen flex flex-col;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-bold tracking-tight text-neutral-900;
   }
 }
 
 @layer components {
+
+  /* Glassmorphism Utilities */
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-lg border border-white/50 shadow-soft;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    @apply w-2;
+    @apply w-1.5;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-neutral-100;
+    @apply bg-transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-neutral-400 rounded-full;
+    @apply bg-neutral-300 rounded-full hover:bg-neutral-400 transition-colors;
   }
+}
 
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral-500;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

@@ -23,7 +23,7 @@ const ModeCard = ({
     <Card
       variant="elevated"
       className={`
-        relative h-72 flex flex-col justify-between overflow-hidden group
+        relative h-full min-h-[18rem] flex flex-col justify-between overflow-hidden group
         transition-all duration-500
         ${enabled ? 'hover:-translate-y-2 hover:shadow-xl border-transparent dark:hover:border-primary-500/50' : 'opacity-60 cursor-not-allowed'}
       `}
@@ -105,7 +105,7 @@ const ModeCard = ({
   );
 
   if (!enabled) {
-    return <div className="filter grayscale contrast-75 opacity-70">{CardContent}</div>;
+    return <div className="filter grayscale contrast-75 opacity-70 h-full">{CardContent}</div>;
   }
 
   return <Link to={route} className="block h-full">{CardContent}</Link>;

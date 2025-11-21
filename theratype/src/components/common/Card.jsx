@@ -7,6 +7,7 @@ const Card = ({
   padding = 'md', // sm, md, lg, none
   title,
   subtitle,
+  ...props
 }) => {
   const baseStyles = 'rounded-2xl transition-all duration-300 overflow-hidden';
 
@@ -25,7 +26,7 @@ const Card = ({
   };
 
   return (
-    <div className={`${baseStyles} ${variants[variant]} ${paddings[padding]} ${className}`}>
+    <div className={`${baseStyles} ${variants[variant]} ${paddings[padding]} ${className}`} {...props}>
       {(title || subtitle) && (
         <div className="mb-4">
           {title && <h3 className="text-xl font-bold text-text-main mb-1">{title}</h3>}

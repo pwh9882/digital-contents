@@ -27,9 +27,9 @@ const InsightMode = () => {
         return;
       }
 
-      if (e.key === 'ArrowLeft' || e.key === '1') {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === '1') {
         handleSelect('A');
-      } else if (e.key === 'ArrowRight' || e.key === '2') {
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === '2') {
         handleSelect('B');
       }
     };

@@ -111,7 +111,7 @@ const TherapyMode = () => {
       {isDemoMode && (
         <div className="bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 dark:from-primary-900/20 dark:to-secondary-900/20 dark:border-primary-800">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-xl dark:bg-bg-base dark:text-primary-400">
+            <div className="w-10 h-10 bg-bg-surface rounded-full flex items-center justify-center shadow-sm text-xl dark:bg-bg-base dark:text-primary-400">
               💡
             </div>
             <div>

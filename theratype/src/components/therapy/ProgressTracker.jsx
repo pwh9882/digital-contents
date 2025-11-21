@@ -20,17 +20,17 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
   return (
     <Card variant="outlined" className="h-full">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-neutral-800">
+        <h3 className="text-lg font-bold text-text-main">
           Journey Progress
         </h3>
-        <span className="text-sm font-bold px-2 py-1 rounded bg-neutral-100 text-neutral-600">
+        <span className="text-sm font-bold px-2 py-1 rounded bg-bg-highlight text-text-muted">
           {progress}%
         </span>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-8">
-        <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-bg-highlight rounded-full overflow-hidden">
           <div
             className="h-full transition-all duration-1000 ease-out rounded-full"
             style={{
@@ -39,7 +39,7 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
             }}
           />
         </div>
-        <p className="text-xs text-neutral-400 mt-2 text-right">
+        <p className="text-xs text-text-muted mt-2 text-right">
           {masteredCount} of {totalCount} completed
         </p>
       </div>
@@ -55,19 +55,19 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
             <div
               key={sentence.id}
               className={`p-3 rounded-xl border transition-all duration-200 ${isMastered
-                  ? 'bg-neutral-50 border-neutral-200 opacity-70'
-                  : 'bg-white border-neutral-100 hover:border-primary-200 hover:shadow-sm'
+                ? 'bg-bg-highlight border-border-base opacity-70'
+                : 'bg-bg-surface border-border-base hover:border-primary-light hover:shadow-sm'
                 }`}
             >
               <div className="flex items-start gap-3">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 ${isMastered
-                    ? 'bg-green-100 text-green-600'
-                    : 'bg-neutral-100 text-neutral-400'
+                  ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                  : 'bg-bg-highlight text-text-muted'
                   }`}>
                   {isMastered ? '✓' : index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${isMastered ? 'text-neutral-500 line-through' : 'text-neutral-700'}`}>
+                  <p className={`text-sm font-medium truncate ${isMastered ? 'text-text-muted line-through' : 'text-text-main'}`}>
                     {sentence.text}
                   </p>
 
@@ -77,8 +77,8 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
                       <div
                         key={i}
                         className={`w-1.5 h-1.5 rounded-full ${i < successCount
-                            ? 'bg-primary-400'
-                            : 'bg-neutral-200'
+                          ? 'bg-primary'
+                          : 'bg-bg-highlight'
                           }`}
                       />
                     ))}
@@ -91,18 +91,18 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
       </div>
 
       {/* Legend */}
-      <div className="mt-6 pt-6 border-t border-neutral-100">
-        <p className="text-xs text-neutral-400 font-medium uppercase tracking-wider mb-2">
+      <div className="mt-6 pt-6 border-t border-border-base">
+        <p className="text-xs text-text-muted font-medium uppercase tracking-wider mb-2">
           Mastery Criteria
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className="px-2 py-1 bg-neutral-50 text-neutral-500 text-xs rounded border border-neutral-100">
+          <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
             90% Accuracy
           </span>
-          <span className="px-2 py-1 bg-neutral-50 text-neutral-500 text-xs rounded border border-neutral-100">
+          <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
             20+ WPM
           </span>
-          <span className="px-2 py-1 bg-neutral-50 text-neutral-500 text-xs rounded border border-neutral-100">
+          <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
             3x Success
           </span>
         </div>

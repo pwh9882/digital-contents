@@ -94,11 +94,11 @@ const DashboardPage = () => {
             {/* Stats Overview */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card variant="elevated" className="p-6 text-center">
-                    <div className="text-3xl font-bold text-primary-main mb-1">{stats.totalSessions}</div>
+                    <div className="text-3xl font-bold text-primary mb-1">{stats.totalSessions}</div>
                     <div className="text-xs text-text-muted uppercase tracking-wider">Total Sessions</div>
                 </Card>
                 <Card variant="elevated" className="p-6 text-center">
-                    <div className="text-3xl font-bold text-secondary-main mb-1">{stats.avgWpm}</div>
+                    <div className="text-3xl font-bold text-secondary mb-1">{stats.avgWpm}</div>
                     <div className="text-xs text-text-muted uppercase tracking-wider">Avg WPM</div>
                 </Card>
                 <Card variant="elevated" className="p-6 text-center">
@@ -119,9 +119,9 @@ const DashboardPage = () => {
                         {recentActivity.length > 0 ? (
                             <div className="space-y-4">
                                 {recentActivity.map((item) => (
-                                    <div key={item.id} className="flex items-center justify-between p-4 bg-bg-highlight rounded-xl border border-border-base hover:border-primary-200 transition-colors">
+                                    <div key={item.id} className="flex items-center justify-between p-4 bg-bg-highlight rounded-xl border border-border-base hover:border-primary transition-colors">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary-main">
+                                            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary">
                                                 🌿
                                             </div>
                                             <div>
@@ -153,7 +153,7 @@ const DashboardPage = () => {
 
                 {/* Right Column: Profile & Goals */}
                 <div className="lg:col-span-1 space-y-8">
-                    <Card className="bg-gradient-to-br from-primary-main to-primary-700 text-white border-none">
+                    <Card className="bg-gradient-to-br from-primary to-primary-700 text-white border-none">
                         <div className="text-center p-6">
                             <div className="w-20 h-20 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-3xl mb-4 border-2 border-white/30">
                                 👤
@@ -171,7 +171,7 @@ const DashboardPage = () => {
                             )}
 
                             <Link to="/insight">
-                                <Button variant="ghost" className="w-full bg-white text-primary-main hover:bg-primary-light">
+                                <Button variant="ghost" className="w-full bg-bg-surface text-primary hover:bg-bg-highlight">
                                     {stats.insightCompleted ? 'Retake Insight Analysis' : 'Start Insight Mode'}
                                 </Button>
                             </Link>

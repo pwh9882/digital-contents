@@ -6,25 +6,27 @@
 @layer base {
   :root {
     /* Light Mode Variables */
-    --bg-base: #F1F5F9;
-    /* Slate-100 (Darker for better contrast with white cards) */
-    --bg-surface: #FFFFFF;
-    /* White */
-    --bg-surface-rgb: 255, 255, 255;
-    --bg-highlight: #E2E8F0;
-    /* Slate-200 */
+    --bg-base: #E9EEF7;
+    /* Cool-tinted canvas to avoid flat white */
+    --bg-surface: #F7F9FC;
+    /* Lightened surface with subtle blue tint */
+    --bg-surface-rgb: 247, 249, 252;
+    --bg-paper: #FFFFFF;
+    /* Sidebar / panel surface */
+    --bg-highlight: #DFE7F5;
+    /* Hover and subtle fills */
 
-    --text-main: #020617;
-    /* Slate-950 (Darker than Slate-900) */
-    --text-muted: #64748B;
-    /* Slate-500 */
+    --text-main: #0D162A;
+    /* Darker ink for stronger contrast */
+    --text-muted: #3B4A63;
+    /* Mid-tone slate for secondary text */
     --text-inverted: #FFFFFF;
     /* White */
 
-    --border-base: #CBD5E1;
-    /* Slate-300 (Darker than Slate-200 for better visibility) */
-    --border-highlight: #94A3B8;
-    /* Slate-400 */
+    --border-base: #C5D1E3;
+    /* Defined edges on light backgrounds */
+    --border-highlight: #9FB4D5;
+    /* Stronger hover/active borders */
 
     /* Brand Colors - Light */
     --primary-main: #2563EB;
@@ -57,6 +59,8 @@
     --bg-surface: #1E293B;
     /* Slate-800 */
     --bg-surface-rgb: 30, 41, 59;
+    --bg-paper: #111827;
+    /* Sidebar / panel surface */
     --bg-highlight: #334155;
     /* Slate-700 */
 
@@ -137,6 +141,18 @@
 @layer components {
 
   /* Glassmorphism Utilities - Adaptive */
+  .app-surface {
+    background-color: var(--bg-base);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.10), transparent 32%),
+      radial-gradient(circle at 80% 0%, rgba(13, 148, 136, 0.08), transparent 30%);
+  }
+
+  .dark .app-surface {
+    background-color: var(--bg-base);
+    background-image: none;
+  }
+
   .glass-panel {
     @apply backdrop-blur-lg shadow-soft dark:shadow-dark-soft;
     background-color: rgba(var(--bg-surface-rgb), 0.7);

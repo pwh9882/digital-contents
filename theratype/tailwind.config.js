@@ -12,6 +12,7 @@ export default {
         bg: {
           base: 'var(--bg-base)',
           surface: 'var(--bg-surface)',
+          paper: 'var(--bg-paper)',
           highlight: 'var(--bg-highlight)',
         },
         text: {
@@ -26,6 +27,7 @@ export default {
         // Brand Colors
         primary: {
           DEFAULT: 'var(--primary-main)',
+          main: 'var(--primary-main)', // Alias for consistency
           hover: 'var(--primary-hover)',
           light: 'var(--primary-light)',
           contrast: 'var(--primary-contrast)',
@@ -43,6 +45,7 @@ export default {
         },
         secondary: {
           DEFAULT: 'var(--secondary-main)',
+          main: 'var(--secondary-main)', // Alias for consistency
           hover: 'var(--secondary-hover)',
           light: 'var(--secondary-light)',
           contrast: 'var(--secondary-contrast)',

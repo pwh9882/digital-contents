@@ -78,18 +78,21 @@ const MainHub = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="sm">Daily Check-in</Button>
+          <Button variant="secondary" size="sm" className="shadow-soft">Daily Check-in</Button>
           <Link to="/dashboard">
-            <Button variant="outline" size="sm" className="bg-bg-surface border-border-base hover:bg-bg-highlight">View Progress</Button>
+            <Button variant="primary" size="sm" className="shadow-soft">View Progress</Button>
           </Link>
         </div>
       </div>
 
       {/* Daily Inspiration / Hero Card */}
-      <Card variant="elevated" className="bg-gradient-to-r from-primary-main to-primary-700 text-white border-none overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl"></div>
-        <div className="relative z-10 p-4 md:p-6">
-          <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 backdrop-blur-sm border border-white/30">
+      <Card
+        variant="elevated"
+        className="relative overflow-hidden border-none bg-gradient-to-br from-primary-600 via-indigo-600 to-teal-600 text-white shadow-[0_24px_70px_-34px_rgba(37,99,235,0.6)]"
+      >
+        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.4),transparent_40%),radial-gradient(circle_at_82%_8%,rgba(56,189,248,0.3),transparent_38%)]" />
+        <div className="relative z-10 p-4 md:p-6 lg:p-8">
+          <span className="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-bold mb-4 backdrop-blur-sm border border-white/30 tracking-wide">
             Daily Wisdom
           </span>
           <blockquote className="text-2xl md:text-3xl font-display font-medium leading-relaxed mb-6">

@@ -37,10 +37,10 @@ const TherapySentence = ({ sentence, onComplete }) => {
           <div className="text-6xl mb-4 animate-bounce">
             {lastResult.isSuccess ? '🌿' : '🌱'}
           </div>
-          <h3 className="text-3xl font-bold text-neutral-800 mb-2">
+          <h3 className="text-3xl font-bold text-text-main mb-2">
             {lastResult.isSuccess ? 'Excellent Flow' : 'Growing Stronger'}
           </h3>
-          <p className="text-neutral-500">
+          <p className="text-text-muted">
             {lastResult.isSuccess
               ? 'You have mastered this thought pattern.'
               : 'Every keystroke brings you closer to mastery.'}
@@ -48,19 +48,19 @@ const TherapySentence = ({ sentence, onComplete }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-6 mb-8 w-full max-w-md">
-          <Card variant="flat" className="bg-neutral-50 text-center p-4">
-            <div className={`text-3xl font-bold font-mono ${lastResult.wpm >= 20 ? 'text-primary-600' : 'text-neutral-600'
+          <Card variant="flat" className="bg-bg-highlight text-center p-4">
+            <div className={`text-3xl font-bold font-mono ${lastResult.wpm >= 20 ? 'text-primary' : 'text-text-muted'
               }`}>
               {lastResult.wpm}
             </div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider mt-1">WPM</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">WPM</div>
           </Card>
-          <Card variant="flat" className="bg-neutral-50 text-center p-4">
-            <div className={`text-3xl font-bold font-mono ${lastResult.accuracy >= 90 ? 'text-secondary-600' : 'text-neutral-600'
+          <Card variant="flat" className="bg-bg-highlight text-center p-4">
+            <div className={`text-3xl font-bold font-mono ${lastResult.accuracy >= 90 ? 'text-secondary' : 'text-text-muted'
               }`}>
               {lastResult.accuracy}%
             </div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider mt-1">Accuracy</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">Accuracy</div>
           </Card>
         </div>
 
@@ -80,16 +80,16 @@ const TherapySentence = ({ sentence, onComplete }) => {
     <div className="space-y-8 animate-fade-in">
       {/* Context Header */}
       <div className="text-center space-y-2">
-        <span className="inline-block px-3 py-1 bg-primary-50 text-primary-600 rounded-full text-xs font-bold uppercase tracking-wider">
+        <span className="inline-block px-3 py-1 bg-primary-50 text-primary rounded-full text-xs font-bold uppercase tracking-wider dark:bg-primary-900/30">
           Therapeutic Focus
         </span>
-        <h2 className="text-xl font-medium text-neutral-600">
+        <h2 className="text-xl font-medium text-text-muted">
           {sentence.therapeuticIntent}
         </h2>
       </div>
 
       {/* Typing Area */}
-      <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 p-8 md:p-12">
+      <div className="bg-bg-surface rounded-3xl shadow-sm border border-border-base p-8 md:p-12">
         <TypingInput
           targetSentence={sentence.text}
           onComplete={handleComplete}
@@ -98,8 +98,8 @@ const TherapySentence = ({ sentence, onComplete }) => {
 
       {/* Scientific Basis (Subtle) */}
       <div className="text-center max-w-2xl mx-auto">
-        <p className="text-xs text-neutral-400 leading-relaxed">
-          <span className="font-bold text-neutral-500">Scientific Basis:</span> {sentence.scientificBasis}
+        <p className="text-xs text-text-muted leading-relaxed">
+          <span className="font-bold text-text-main">Scientific Basis:</span> {sentence.scientificBasis}
         </p>
       </div>
     </div>

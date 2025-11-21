@@ -29,8 +29,8 @@ const ModeCard = ({
       `}
     >
       {/* Background Gradient & Decoration */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-5 group-hover:opacity-10 transition-opacity duration-500 dark:opacity-10 dark:group-hover:opacity-20`} />
-      <div className={`absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br ${color} opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 dark:opacity-20`} />
+      <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity duration-500 dark:opacity-20 dark:group-hover:opacity-30`} />
+      <div className={`absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br ${color} opacity-20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 dark:opacity-30`} />
 
       {/* Badges */}
       <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
@@ -57,7 +57,7 @@ const ModeCard = ({
           {icon}
         </div>
 
-        <h3 className="text-2xl font-display font-bold text-text-main mb-2 group-hover:text-primary-main transition-colors">
+        <h3 className="text-2xl font-display font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
           {title}
         </h3>
 
@@ -90,7 +90,7 @@ const ModeCard = ({
         ) : (
           <div className="flex items-center justify-between">
             {enabled ? (
-              <span className="text-sm font-bold text-primary-main group-hover:translate-x-1 transition-transform flex items-center gap-2">
+              <span className="text-sm font-bold text-primary group-hover:translate-x-1 transition-transform flex items-center gap-2">
                 Start Session <span className="text-lg">→</span>
               </span>
             ) : (

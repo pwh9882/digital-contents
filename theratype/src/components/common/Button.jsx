@@ -15,9 +15,9 @@ const Button = ({
   const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
 
   const variants = {
-    primary: 'bg-primary-main text-primary-contrast hover:bg-primary-hover shadow-lg shadow-primary-main/30 focus:ring-primary-main',
-    secondary: 'bg-secondary-main text-secondary-contrast hover:bg-secondary-hover shadow-lg shadow-secondary-main/30 focus:ring-secondary-main',
-    outline: 'border-2 border-primary-main text-primary-main hover:bg-primary-light focus:ring-primary-main dark:hover:bg-primary-900/30',
+    primary: 'bg-primary text-primary-contrast hover:bg-primary-hover shadow-lg shadow-primary/30 focus:ring-primary',
+    secondary: 'bg-secondary text-secondary-contrast hover:bg-secondary-hover shadow-lg shadow-secondary/30 focus:ring-secondary',
+    outline: 'border-2 border-primary text-primary hover:bg-primary-light focus:ring-primary dark:hover:bg-primary-900/30',
     ghost: 'text-text-muted hover:bg-bg-highlight hover:text-text-main focus:ring-text-muted',
     danger: 'bg-error text-white hover:bg-red-600 shadow-lg shadow-error/30 focus:ring-error',
   };

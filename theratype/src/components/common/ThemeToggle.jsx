@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
 
-const ThemeToggle = () => {
+const ThemeToggle = ({ className, showLabel = false, labelClassName = '' }) => {
     const [isDark, setIsDark] = useState(false);
 
     useEffect(() => {
@@ -29,16 +29,22 @@ const ThemeToggle = () => {
 
     return (
         <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={toggleTheme}
-            className="rounded-full w-10 h-10 p-0 flex items-center justify-center text-text-muted hover:text-primary-main hover:bg-bg-highlight transition-colors"
+            className={className || "rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors bg-bg-surface border-border-base hover:bg-bg-highlight hover:border-primary"}
             aria-label="Toggle Dark Mode"
         >
             {isDark ? (
-                <span className="text-xl">☀️</span>
+                <div className="flex items-center gap-3">
+                    <span className="text-xl text-yellow-400 drop-shadow-glow animate-fade-in">☀️</span>
+                    {showLabel && <span className={`text-sm font-medium text-text-main ${labelClassName}`}>Light Mode</span>}
+                </div>
             ) : (
-                <span className="text-xl">🌙</span>
+                <div className="flex items-center gap-3">
+                    <span className="text-xl text-blue-600 drop-shadow-sm animate-fade-in">🌙</span>
+                    {showLabel && <span className={`text-sm font-medium text-text-main ${labelClassName}`}>Dark Mode</span>}
+                </div>
             )}
         </Button>
     );

@@ -77,17 +77,17 @@ const TypingInput = ({ targetSentence, onComplete }) => {
   return (
     <div className="space-y-8 w-full max-w-3xl mx-auto">
       {/* Target Sentence Display */}
-      <div className="relative p-8 bg-white rounded-2xl shadow-soft border border-neutral-100 text-center">
+      <div className="relative p-8 bg-bg-surface rounded-2xl shadow-soft border border-border-base text-center">
         <div className="text-2xl md:text-3xl font-display font-medium leading-relaxed tracking-tight">
           {targetSentence.split('').map((char, index) => {
-            let colorClass = 'text-neutral-300';
+            let colorClass = 'text-text-muted/50';
             let borderClass = '';
 
             // Current cursor position indicator
             const isCurrent = index === typedText.length;
 
             if (feedback[index] === 'correct') {
-              colorClass = 'text-neutral-800 transition-colors duration-200';
+              colorClass = 'text-text-main transition-colors duration-200';
             } else if (feedback[index] === 'incorrect') {
               colorClass = 'text-error bg-red-50 rounded';
             }
@@ -112,7 +112,7 @@ const TypingInput = ({ targetSentence, onComplete }) => {
           value={typedText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="w-full px-6 py-4 text-xl text-center bg-transparent border-b-2 border-neutral-200 focus:border-primary-500 focus:outline-none transition-colors placeholder-neutral-300 font-medium"
+          className="w-full px-6 py-4 text-xl text-center bg-transparent border-b-2 border-border-base focus:border-primary transition-colors placeholder-text-muted/50 font-medium text-text-main"
           placeholder="Type the sentence above..."
           autoComplete="off"
           spellCheck="false"
@@ -122,13 +122,13 @@ const TypingInput = ({ targetSentence, onComplete }) => {
       {/* Stats */}
       <div className="flex justify-center gap-12 pt-4">
         <div className="text-center">
-          <div className="text-3xl font-bold text-primary-600 font-mono">{wpm}</div>
-          <div className="text-xs uppercase tracking-wider text-neutral-400 font-medium mt-1">WPM</div>
+          <div className="text-3xl font-bold text-primary font-mono">{wpm}</div>
+          <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">WPM</div>
         </div>
-        <div className="w-px bg-neutral-200 h-12" />
+        <div className="w-px bg-border-base h-12" />
         <div className="text-center">
-          <div className="text-3xl font-bold text-secondary-600 font-mono">{accuracy}%</div>
-          <div className="text-xs uppercase tracking-wider text-neutral-400 font-medium mt-1">Accuracy</div>
+          <div className="text-3xl font-bold text-secondary font-mono">{accuracy}%</div>
+          <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">Accuracy</div>
         </div>
       </div>
     </div>

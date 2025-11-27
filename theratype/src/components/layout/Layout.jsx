@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../common/ThemeToggle';
 
 const Layout = ({ children }) => {
     const location = useLocation();
+
+    // 사이드바 확장/축소 상태 (localStorage에서 복원)
+    const [isExpanded, setIsExpanded] = useState(() => {
+        const saved = localStorage.getItem('sidebarExpanded');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
+    // 상태 변경 시 localStorage에 저장
+    useEffect(() => {
+        localStorage.setItem('sidebarExpanded', JSON.stringify(isExpanded));
+    }, [isExpanded]);
+
+    const toggleSidebar = () => setIsExpanded(!isExpanded);
 
     const navItems = [
         { path: '/', label: 'Hub', icon: '🏠' },
@@ -15,15 +28,42 @@ const Layout = ({ children }) => {
     return (
         <div className="min-h-screen app-surface text-text-main font-sans transition-colors duration-300">
             {/* Sidebar Navigation */}
-            <aside className="fixed top-0 left-0 h-full w-20 lg:w-64 bg-bg-paper border-r border-border-base z-50 transition-all duration-300 hidden md:flex flex-col">
+            <aside className={`fixed top-0 left-0 h-full bg-bg-paper border-r border-border-base z-50 transition-all duration-300 hidden md:flex flex-col ${isExpanded ? 'w-64' : 'w-20'}`}>
                 {/* Logo Area */}
-                <div className="h-20 flex items-center justify-center lg:justify-start lg:px-8 border-b border-border-base">
-                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30">
-                        T
+                <div className={`h-20 flex items-center border-b border-border-base ${isExpanded ? 'justify-between px-4' : 'flex-col justify-center gap-2 px-2'}`}>
+                    <div className={`flex items-center ${isExpanded ? 'min-w-0' : ''}`}>
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30 flex-shrink-0">
+                            T
+                        </div>
+                        {isExpanded && (
+                            <span className="ml-3 font-display font-bold text-xl text-text-main truncate">
+                                TheraType
+                            </span>
+                        )}
                     </div>
-                    <span className="ml-3 font-display font-bold text-xl hidden lg:block text-text-main">
-                        TheraType
-                    </span>
+                    {/* 사이드바 토글 버튼 */}
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-2 rounded-lg hover:bg-bg-highlight transition-colors text-text-muted hover:text-text-main flex-shrink-0"
+                        title={isExpanded ? '사이드바 축소' : '사이드바 확장'}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-transform duration-300 ${isExpanded ? '' : 'rotate-180'}`}
+                        >
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M9 3v18" />
+                            <path d="M14 9l-3 3 3 3" />
+                        </svg>
+                    </button>
                 </div>
 
                 {/* Navigation Links */}
@@ -35,15 +75,16 @@ const Layout = ({ children }) => {
                                 key={item.path}
                                 to={item.path}
                                 className={`
-                  flex items-center justify-center lg:justify-start px-3 py-3 rounded-xl transition-all duration-200 group border
-                  ${isActive
+                                    flex items-center px-3 py-3 rounded-xl transition-all duration-200 group border
+                                    ${isExpanded ? 'justify-start' : 'justify-center'}
+                                    ${isActive
                                         ? 'bg-primary text-white shadow-md shadow-primary/20 border-primary'
                                         : 'bg-bg-surface text-text-muted border-transparent hover:bg-bg-highlight hover:text-text-main hover:border-border-base'
                                     }
-                `}
+                                `}
                             >
                                 <span className="text-xl group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
-                                <span className={`ml-3 font-medium hidden lg:block ${isActive ? 'font-bold' : ''}`}>
+                                <span className={`ml-3 font-medium transition-opacity duration-200 ${isActive ? 'font-bold' : ''} ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 ml-0 overflow-hidden'}`}>
                                     {item.label}
                                 </span>
                             </Link>
@@ -53,19 +94,19 @@ const Layout = ({ children }) => {
 
                 {/* User Profile & Theme Toggle */}
                 <div className="p-4 border-t border-border-base space-y-4">
-                    <div className="flex justify-center lg:justify-start">
+                    <div className={`flex ${isExpanded ? 'justify-start' : 'justify-center'}`}>
                         <ThemeToggle
                             showLabel={true}
-                            labelClassName="hidden lg:block"
-                            className="w-10 h-10 lg:w-full lg:h-auto lg:py-2 lg:px-3 rounded-full lg:rounded-xl flex items-center justify-center lg:justify-start transition-colors bg-bg-surface border border-border-base hover:bg-bg-highlight hover:border-primary"
+                            labelClassName={isExpanded ? '' : 'hidden'}
+                            className={`rounded-xl flex items-center transition-colors bg-bg-surface border border-border-base hover:bg-bg-highlight hover:border-primary ${isExpanded ? 'w-full py-2 px-3 justify-start' : 'w-10 h-10 justify-center rounded-full'}`}
                         />
                     </div>
 
-                    <div className="flex items-center justify-center lg:justify-start p-2 rounded-xl bg-bg-highlight border border-border-base">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-xs font-bold">
+                    <div className={`flex items-center p-2 rounded-xl bg-bg-highlight border border-border-base ${isExpanded ? 'justify-start' : 'justify-center'}`}>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                             G
                         </div>
-                        <div className="ml-3 hidden lg:block overflow-hidden">
+                        <div className={`ml-3 overflow-hidden transition-opacity duration-200 ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 ml-0'}`}>
                             <p className="text-sm font-bold text-text-main truncate">Guest User</p>
                             <p className="text-xs text-text-muted truncate">Free Plan</p>
                         </div>
@@ -105,7 +146,7 @@ const Layout = ({ children }) => {
             </nav>
 
             {/* Main Content Area */}
-            <main className="flex-1 md:ml-20 lg:ml-64 min-h-screen transition-all duration-300 pt-16 md:pt-0">
+            <main className={`flex-1 min-h-screen transition-all duration-300 pt-16 md:pt-0 ${isExpanded ? 'md:ml-64' : 'md:ml-20'}`}>
                 <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-10 animate-fade-in">
                     {children}
                 </div>

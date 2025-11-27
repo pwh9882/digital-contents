@@ -84,10 +84,16 @@ const TherapyMode = () => {
     setMasteryProgress(progress);
   };
 
+  // 오늘 완료한 세션 수 계산
+  const todaySessionCount = sessionHistory.filter(s => {
+    const today = new Date().toDateString();
+    return new Date(s.completedAt).toDateString() === today;
+  }).length;
+
   if (!profileKey || !currentSentence) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-pulse text-primary-400 font-medium">Preparing your session...</div>
+        <div className="animate-pulse text-primary-400 font-medium">세션을 준비하고 있어요...</div>
       </div>
     );
   }
@@ -98,13 +104,20 @@ const TherapyMode = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-display font-bold text-text-main">
-            Therapy Session
+            테라피 세션
           </h1>
           <p className="text-text-muted">
-            {isDemoMode ? 'Experience the healing power of typing.' : 'Your personalized daily practice.'}
+            {isDemoMode ? '타이핑의 치유 효과를 경험해보세요.' : '맞춤형 일일 연습을 시작하세요.'}
           </p>
         </div>
-        <ProfileBadge profileKey={profileKey} />
+        <div className="flex items-center gap-4">
+          {/* 오늘의 세션 카운터 */}
+          <div className="text-center px-4 py-2 bg-bg-surface rounded-xl border border-border-base">
+            <div className="text-2xl font-bold text-primary font-mono">{todaySessionCount}</div>
+            <div className="text-xs text-text-muted">오늘 완료</div>
+          </div>
+          <ProfileBadge profileKey={profileKey} />
+        </div>
       </div>
 
       {/* Demo Mode Banner */}
@@ -115,9 +128,9 @@ const TherapyMode = () => {
               💡
             </div>
             <div>
-              <h3 className="font-bold text-primary-main">Demo Mode Active</h3>
+              <h3 className="font-bold text-primary-main">체험 모드</h3>
               <p className="text-sm text-text-muted">
-                Complete the Insight Mode to unlock your personalized therapeutic profile.
+                Insight 모드를 완료하면 맞춤형 테라피 프로필이 생성됩니다.
               </p>
             </div>
           </div>
@@ -127,7 +140,7 @@ const TherapyMode = () => {
             onClick={() => navigate('/insight')}
             className="whitespace-nowrap"
           >
-            Start Insight Mode
+            Insight 모드 시작
           </Button>
         </div>
       )}
@@ -156,17 +169,17 @@ const TherapyMode = () => {
                 <div className="text-center p-4">
                   <div className="text-4xl mb-2">🎉</div>
                   <h3 className="text-xl font-bold mb-2">
-                    Journey Complete!
+                    모든 문장 마스터!
                   </h3>
                   <p className="text-white/90 text-sm mb-4">
-                    You have mastered all sentences in this profile.
+                    이 프로필의 모든 문장을 완료했어요.
                   </p>
                   <Button
                     variant="ghost"
                     className="bg-white/20 text-white hover:bg-white/30 border-none w-full"
                     onClick={() => navigate('/dashboard')}
                   >
-                    View Dashboard
+                    대시보드 보기
                   </Button>
                 </div>
               </Card>

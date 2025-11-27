@@ -2,10 +2,116 @@
  * 타이핑 분석 유틸리티
  *
  * @description WPM, 정확도, 망설임 패턴 등을 분석하는 함수들
+ * 한글 조합 특성을 고려한 정확도 계산 및 타/분 속도 측정
  */
 
+// ============================================
+// 한글 자모 관련 상수 및 유틸리티
+// ============================================
+
+// 초성 19개
+const CHOSEONG = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+// 중성 21개
+const JUNGSEONG = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+// 종성 28개 (첫 번째는 종성 없음)
+const JONGSEONG = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+// 호환용 자모 → 초성 인덱스 매핑 (ㄱ=U+3131 시작)
+const COMPAT_JAMO_TO_CHOSEONG = {
+  'ㄱ': 0, 'ㄲ': 1, 'ㄴ': 2, 'ㄷ': 3, 'ㄸ': 4, 'ㄹ': 5, 'ㅁ': 6, 'ㅂ': 7, 'ㅃ': 8,
+  'ㅅ': 9, 'ㅆ': 10, 'ㅇ': 11, 'ㅈ': 12, 'ㅉ': 13, 'ㅊ': 14, 'ㅋ': 15, 'ㅌ': 16, 'ㅍ': 17, 'ㅎ': 18
+};
+
 /**
- * WPM (Words Per Minute) 계산
+ * 완성형 한글인지 확인
+ */
+const isCompleteHangul = (char) => {
+  const code = char.charCodeAt(0);
+  return code >= 0xAC00 && code <= 0xD7A3;
+};
+
+/**
+ * 호환용 자모(ㄱㄴㄷ...)인지 확인
+ */
+const isCompatJamo = (char) => {
+  const code = char.charCodeAt(0);
+  return code >= 0x3131 && code <= 0x3163;
+};
+
+// 자음/모음 구분 함수 (향후 확장용으로 유지)
+// const isCompatConsonant = (char) => {
+//   const code = char.charCodeAt(0);
+//   return code >= 0x3131 && code <= 0x314E;
+// };
+// const isCompatVowel = (char) => {
+//   const code = char.charCodeAt(0);
+//   return code >= 0x314F && code <= 0x3163;
+// };
+
+/**
+ * 완성형 한글을 자모 배열로 분해
+ * @param {string} char - 한글 글자 1개
+ * @returns {string[]} 자모 배열 (예: "안" → ["ㅇ", "ㅏ", "ㄴ"])
+ */
+export const decomposeHangul = (char) => {
+  if (!char || char.length === 0) return [];
+
+  const code = char.charCodeAt(0);
+
+  // 완성형 한글 (가~힣)
+  if (isCompleteHangul(char)) {
+    const syllableIndex = code - 0xAC00;
+    const choseongIndex = Math.floor(syllableIndex / 588);
+    const jungseongIndex = Math.floor((syllableIndex % 588) / 28);
+    const jongseongIndex = syllableIndex % 28;
+
+    const result = [CHOSEONG[choseongIndex], JUNGSEONG[jungseongIndex]];
+    if (jongseongIndex > 0) {
+      result.push(JONGSEONG[jongseongIndex]);
+    }
+    return result;
+  }
+
+  // 호환용 자모 (ㄱ, ㅏ 등 단독 자모)
+  if (isCompatJamo(char)) {
+    return [char];
+  }
+
+  // 그 외 문자는 그대로 반환
+  return [char];
+};
+
+/**
+ * 텍스트의 총 자모 수 계산 (타수 기준)
+ * @param {string} text - 텍스트
+ * @returns {number} 자모 수
+ */
+export const countJamo = (text) => {
+  if (!text) return 0;
+
+  let count = 0;
+  for (const char of text) {
+    const jamo = decomposeHangul(char);
+    count += jamo.length;
+  }
+  return count;
+};
+
+/**
+ * 타/분 (타수/분) 계산 - 한국식 타이핑 속도
+ * @param {string} text - 타이핑한 텍스트
+ * @param {number} timeMs - 경과 시간 (밀리초)
+ * @returns {number} 타/분 값 (정수)
+ */
+export const calculateTypingSpeed = (text, timeMs) => {
+  if (timeMs === 0) return 0;
+  const jamoCount = countJamo(text);
+  const minutes = timeMs / 60000;
+  return Math.round(jamoCount / minutes);
+};
+
+/**
+ * WPM (Words Per Minute) 계산 - 영어 기준 (하위 호환성 유지)
  * 한글 기준: 글자 수 / 5를 단어로 간주
  *
  * @param {number} charCount - 타이핑한 글자 수
@@ -20,99 +126,165 @@ export const calculateWPM = (charCount, timeMs) => {
 };
 
 /**
- * 정확도 계산 (간소화된 Levenshtein)
- *
- * @param {string} target - 목표 문장
- * @param {string} typed - 타이핑한 문장
- * @returns {number} 정확도 (0-100%)
+ * 두 자모 배열이 접두사 관계인지 확인
+ * @param {string[]} prefix - 접두사 후보
+ * @param {string[]} full - 전체 자모 배열
+ * @returns {boolean} prefix가 full의 접두사이면 true
  */
+const isJamoPrefix = (prefix, full) => {
+  if (prefix.length > full.length) return false;
+  for (let i = 0; i < prefix.length; i++) {
+    if (prefix[i] !== full[i]) return false;
+  }
+  return true;
+};
+
 /**
- * 정확도 계산 (Real-time Accuracy)
- * 사용자가 입력한 텍스트와 타겟 텍스트의 "가장 잘 맞는 접두사"와의 거리를 계산합니다.
- * 이를 통해 입력 도중에도 정확한 정확도를 제공합니다.
+ * 한글 조합을 고려한 정확도 계산
+ * - 완성된 글자들은 글자 단위로 비교
+ * - 마지막 조합 중인 글자는 자모 접두사로 비교
+ *
+ * 예: 타겟 "안녕", 입력 "ㅇ" → "안"의 자모 [ㅇ,ㅏ,ㄴ]과 [ㅇ] 비교 → 접두사 일치 → 100%
  *
  * @param {string} target - 목표 문장
  * @param {string} typed - 타이핑한 문장
+ * @param {boolean} isComposing - 현재 조합 중인지 여부
  * @returns {number} 정확도 (0-100%)
  */
-export const calculateAccuracy = (target, typed) => {
+export const calculateAccuracy = (target, typed, isComposing = false) => {
   if (!target || target.length === 0) return 100;
-  if (!typed || typed.length === 0) return 100; // 아무것도 입력 안했으면 100% 시작
+  if (!typed || typed.length === 0) return 100;
 
-  const targetLen = target.length;
   const typedLen = typed.length;
+  const targetLen = target.length;
 
-  // Levenshtein Distance Matrix
-  // Rows: typed (0..typedLen), Cols: target (0..targetLen)
-  const matrix = Array(typedLen + 1).fill(null).map(() => Array(targetLen + 1).fill(null));
+  let correctCount = 0;
+  let totalCount = 0;
 
-  // Initialize first row (typed "") -> distance to target prefix is just prefix length (insertions)
-  // BUT for "prefix matching", we want to find best prefix.
-  // Actually, if typed is "", distance to target "" is 0.
-  // Distance to target "H" is 1 (delete H? No, insert H).
-  // Wait, standard Levenshtein:
-  // typed "" vs target "Hello" -> distance 5 (insert 5 chars).
+  for (let i = 0; i < typedLen; i++) {
+    const typedChar = typed[i];
+    const targetChar = target[i];
 
-  for (let j = 0; j <= targetLen; j++) matrix[0][j] = j;
-  for (let i = 0; i <= typedLen; i++) matrix[i][0] = i;
+    // 타겟을 초과해서 입력한 경우 → 오류
+    if (i >= targetLen) {
+      totalCount++;
+      continue;
+    }
 
-  for (let i = 1; i <= typedLen; i++) {
-    for (let j = 1; j <= targetLen; j++) {
-      const cost = target[j - 1] === typed[i - 1] ? 0 : 1;
-      matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1, // deletion (typed has extra char)
-        matrix[i][j - 1] + 1, // insertion (typed missing char from target)
-        matrix[i - 1][j - 1] + cost // substitution
-      );
+    const typedJamo = decomposeHangul(typedChar);
+    const targetJamo = decomposeHangul(targetChar);
+
+    // 마지막 글자이고 조합 중일 수 있는 경우 → 자모 접두사 비교
+    const isLastChar = i === typedLen - 1;
+    const mightBeComposing = isLastChar && (isComposing || isCompatJamo(typedChar) || isCompleteHangul(typedChar));
+
+    if (mightBeComposing && isJamoPrefix(typedJamo, targetJamo)) {
+      // 조합 중인 글자가 타겟의 자모 접두사와 일치 → 정확
+      correctCount += typedJamo.length;
+      totalCount += typedJamo.length;
+    } else if (typedChar === targetChar) {
+      // 완전히 동일한 글자
+      correctCount += typedJamo.length;
+      totalCount += typedJamo.length;
+    } else {
+      // 다른 글자 → 자모 단위로 부분 점수
+      let matching = 0;
+      const minLen = Math.min(typedJamo.length, targetJamo.length);
+      for (let j = 0; j < minLen; j++) {
+        if (typedJamo[j] === targetJamo[j]) {
+          matching++;
+        } else {
+          break; // 순서대로 일치해야 함
+        }
+      }
+      correctCount += matching;
+      totalCount += Math.max(typedJamo.length, targetJamo.length);
     }
   }
 
-  // Find the minimum distance in the last row (typed vs any prefix of target)
-  // This represents the "errors committed so far" relative to the best matching target part.
-  let minDistance = Infinity;
+  if (totalCount === 0) return 100;
 
-  // We only consider prefixes that are somewhat close in length to typed.
-  // e.g. if typed length 5, we shouldn't compare to target prefix of length 1 or 50.
-  // But mathematically, min(last_row) works.
-  // However, if we compare "Hel" (len 3) vs "H" (len 1), distance is 2.
-  // vs "He" (len 2), distance 1.
-  // vs "Hel" (len 3), distance 0.
-  // vs "Hell" (len 4), distance 1.
-
-  // We want the minimum distance.
-  minDistance = Math.min(...matrix[typedLen]);
-
-  // Accuracy = (Length Typed - Errors) / Length Typed
-  // If Errors > Length Typed, Accuracy is 0.
-
-  // Edge case: If typed is very short but matches perfectly, minDistance is 0.
-  // Accuracy 100%.
-
-  // What if I typed "Hul" (len 3). Target "Hello".
-  // "Hul" vs "Hel" -> dist 1.
-  // Accuracy (3-1)/3 = 66%.
-
-  const accuracy = (1 - minDistance / typedLen) * 100;
-  return Math.max(0, Math.round(accuracy * 10) / 10);
+  const accuracy = (correctCount / totalCount) * 100;
+  return Math.round(accuracy * 10) / 10;
 };
 
 /**
  * 실시간 정확도 피드백 (글자별 상태)
+ * 한글 조합을 고려하여 마지막 한글 글자는 자모 접두사 일치 시 'composing'으로 표시
  *
  * @param {string} target - 목표 문장
  * @param {string} typed - 타이핑한 문장
- * @returns {Array} 각 글자의 상태 배열 ['correct', 'incorrect', 'pending']
+ * @returns {Array} 각 글자의 상태 배열 ['correct', 'incorrect', 'pending', 'composing']
  */
 export const getCharacterFeedback = (target, typed) => {
+  // 전체 문자열을 자모 단위로 비교하여 빠른 입력 시에도 정확한 피드백 제공
   const feedback = [];
+  const typedLen = typed.length;
 
-  for (let i = 0; i < target.length; i++) {
-    if (i >= typed.length) {
-      feedback.push('pending'); // 아직 입력 안 함
-    } else if (target[i] === typed[i]) {
-      feedback.push('correct'); // 정확함
+  if (typedLen === 0) {
+    // 아무것도 입력 안 함
+    return target.split('').map(() => 'pending');
+  }
+
+  // 전체 문자열을 자모로 분해
+  const targetJamo = [];
+  const targetCharBoundaries = [0]; // 각 글자가 시작되는 자모 인덱스
+  for (const char of target) {
+    const jamo = decomposeHangul(char);
+    targetJamo.push(...jamo);
+    targetCharBoundaries.push(targetJamo.length);
+  }
+
+  const typedJamo = [];
+  const typedCharBoundaries = [0];
+  for (const char of typed) {
+    const jamo = decomposeHangul(char);
+    typedJamo.push(...jamo);
+    typedCharBoundaries.push(typedJamo.length);
+  }
+
+  // 자모 단위로 일치 여부 확인
+  let jamoMatchCount = 0;
+  for (let i = 0; i < typedJamo.length && i < targetJamo.length; i++) {
+    if (typedJamo[i] === targetJamo[i]) {
+      jamoMatchCount++;
     } else {
-      feedback.push('incorrect'); // 틀림
+      break; // 순서대로 일치해야 함
+    }
+  }
+
+  // 각 글자별 피드백 결정
+  for (let charIdx = 0; charIdx < target.length; charIdx++) {
+    const charJamoStart = targetCharBoundaries[charIdx];
+    const charJamoEnd = targetCharBoundaries[charIdx + 1];
+
+    if (charIdx >= typedLen) {
+      // 아직 입력 안 한 글자
+      feedback.push('pending');
+    } else if (target[charIdx] === typed[charIdx]) {
+      // 완전 일치
+      feedback.push('correct');
+    } else {
+      // 자모 기준으로 해당 글자까지 모두 맞았는지 확인
+      const isFullyMatched = jamoMatchCount >= charJamoEnd;
+      // 부분적으로 맞았는지 (이 글자의 자모 중 일부가 일치)
+      const isPartiallyMatched = jamoMatchCount > charJamoStart && jamoMatchCount < charJamoEnd;
+      // 이전 글자들이 모두 맞고, 이 글자가 현재 입력 중인 글자인지
+      const isPreviousAllMatched = jamoMatchCount >= charJamoStart;
+      const isCurrentOrRecent = charIdx >= typedLen - 1;
+
+      if (isFullyMatched) {
+        // 자모 기준 완전 일치 (조합 중)
+        feedback.push('composing');
+      } else if (isPartiallyMatched && isCurrentOrRecent) {
+        // 부분 일치 (조합 진행 중)
+        feedback.push('composing');
+      } else if (isPreviousAllMatched && isCurrentOrRecent) {
+        // 이전까지 맞고 현재 글자 입력 중
+        feedback.push('composing');
+      } else {
+        feedback.push('incorrect');
+      }
     }
   }
 

@@ -4,7 +4,7 @@ const SentencePair = ({ pairData, onSelect, selectedChoice }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
       <div className="text-center mb-12">
-        <span className="inline-block px-4 py-1.5 bg-primary-50 text-primary-600 rounded-full text-sm font-medium tracking-wide uppercase mb-4">
+        <span className="inline-block px-4 py-1.5 bg-primary-light/50 text-primary-main rounded-full text-sm font-medium tracking-wide uppercase mb-4">
           {pairData.categoryName}
         </span>
         <h2 className="text-3xl md:text-4xl font-display font-bold text-text-main">
@@ -25,8 +25,8 @@ const SentencePair = ({ pairData, onSelect, selectedChoice }) => {
             variant={selectedChoice === 'A' ? 'elevated' : 'outlined'}
             onClick={() => onSelect('A')}
             className={`h-64 md:h-80 flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 relative overflow-hidden ${selectedChoice === 'A'
-              ? 'ring-4 ring-primary-100 border-primary-500 shadow-glow'
-              : 'hover:border-primary-300 hover:shadow-lg'
+              ? 'ring-4 ring-primary-main/20 border-primary-main shadow-glow'
+              : 'hover:border-primary-main/60 hover:shadow-lg'
               }`}
           >
             <div className={`absolute top-0 left-0 w-full h-1 bg-primary-500 transition-transform duration-300 ${selectedChoice === 'A' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
@@ -53,8 +53,8 @@ const SentencePair = ({ pairData, onSelect, selectedChoice }) => {
             variant={selectedChoice === 'B' ? 'elevated' : 'outlined'}
             onClick={() => onSelect('B')}
             className={`h-64 md:h-80 flex flex-col justify-center items-center p-8 cursor-pointer transition-all duration-300 relative overflow-hidden ${selectedChoice === 'B'
-              ? 'ring-4 ring-secondary-100 border-secondary-500 shadow-glow'
-              : 'hover:border-secondary-300 hover:shadow-lg'
+              ? 'ring-4 ring-secondary-main/20 border-secondary-main shadow-glow'
+              : 'hover:border-secondary-main/60 hover:shadow-lg'
               }`}
           >
             <div className={`absolute top-0 left-0 w-full h-1 bg-secondary-500 transition-transform duration-300 ${selectedChoice === 'B' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />

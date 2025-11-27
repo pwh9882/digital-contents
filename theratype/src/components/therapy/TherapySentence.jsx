@@ -8,7 +8,8 @@ const TherapySentence = ({ sentence, onComplete }) => {
   const [lastResult, setLastResult] = useState(null);
 
   const handleComplete = (sessionData) => {
-    const isSuccess = sessionData.accuracy >= 90 && sessionData.wpm >= 20;
+    // 타/분 기준: 최소 100타/분 이상이면 성공 (기존 WPM 20 ≈ 100타/분)
+    const isSuccess = sessionData.accuracy >= 90 && sessionData.typingSpeed >= 100;
 
     setLastResult({
       ...sessionData,
@@ -18,7 +19,8 @@ const TherapySentence = ({ sentence, onComplete }) => {
 
     onComplete({
       sentenceId: sentence.id,
-      wpm: sessionData.wpm,
+      typingSpeed: sessionData.typingSpeed,
+      wpm: sessionData.wpm, // 하위 호환성
       accuracy: sessionData.accuracy,
       keystrokeLogs: sessionData.keystrokeLogs,
       completedAt: new Date().toISOString()
@@ -49,18 +51,18 @@ const TherapySentence = ({ sentence, onComplete }) => {
 
         <div className="grid grid-cols-2 gap-6 mb-8 w-full max-w-md">
           <Card variant="flat" className="bg-bg-highlight text-center p-4">
-            <div className={`text-3xl font-bold font-mono ${lastResult.wpm >= 20 ? 'text-primary' : 'text-text-muted'
+            <div className={`text-3xl font-bold font-mono ${lastResult.typingSpeed >= 100 ? 'text-primary' : 'text-text-muted'
               }`}>
-              {lastResult.wpm}
+              {lastResult.typingSpeed}
             </div>
-            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">WPM</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">타/분</div>
           </Card>
           <Card variant="flat" className="bg-bg-highlight text-center p-4">
             <div className={`text-3xl font-bold font-mono ${lastResult.accuracy >= 90 ? 'text-secondary' : 'text-text-muted'
               }`}>
               {lastResult.accuracy}%
             </div>
-            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">Accuracy</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider mt-1">정확도</div>
           </Card>
         </div>
 

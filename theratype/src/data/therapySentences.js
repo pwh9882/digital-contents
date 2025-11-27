@@ -303,7 +303,7 @@ export const getSentencesByDifficulty = (profileKey, difficulty) => {
  * 문장을 3번 이상 정확도 90% 이상으로 완료하면 "마스터"로 간주
  *
  * @param {Array} sessionHistory - 세션 기록 배열
- *   예: [{ sentenceId: 'self_esteem_01', accuracy: 95, wpm: 45 }, ...]
+ *   예: [{ sentenceId: 'self_esteem_01', accuracy: 95, typingSpeed: 150 }, ...]
  * @returns {Object} { masteredCount, totalCount, masteredSentences }
  */
 export const calculateMasteryProgress = (sessionHistory, profileKey) => {
@@ -316,7 +316,8 @@ export const calculateMasteryProgress = (sessionHistory, profileKey) => {
   profile.sentences.forEach((sentence) => {
     const attempts = sessionHistory.filter((s) => s.sentenceId === sentence.id);
     const successfulAttempts = attempts.filter(
-      (s) => s.accuracy >= 90 && s.wpm >= 20 // 정확도 90% 이상, WPM 20 이상
+      // 정확도 90% 이상, 타/분 100 이상 (또는 하위 호환 wpm >= 20)
+      (s) => s.accuracy >= 90 && (s.typingSpeed >= 100 || s.wpm >= 20)
     );
 
     if (successfulAttempts.length >= 3) {

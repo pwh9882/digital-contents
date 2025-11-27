@@ -28,8 +28,10 @@ const InsightMode = () => {
       }
 
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === '1') {
+        e.preventDefault();
         handleSelect('A');
       } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === '2') {
+        e.preventDefault();
         handleSelect('B');
       }
     };

@@ -121,63 +121,66 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            {/* Stats Overview - 기본 통계 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Tooltip content={METRIC_TOOLTIPS.totalSessions} position="bottom">
-                    <Card variant="elevated" className="p-6 text-center cursor-help">
-                        <div className="text-3xl font-bold text-primary mb-1">{stats.totalSessions}</div>
-                        <div className="text-xs text-text-muted uppercase tracking-wider">전체 세션</div>
-                    </Card>
-                </Tooltip>
-                <Tooltip content={METRIC_TOOLTIPS.avgWpm} position="bottom">
-                    <Card variant="elevated" className="p-6 text-center cursor-help">
-                        <div className="text-3xl font-bold text-secondary mb-1">{stats.avgWpm}</div>
-                        <div className="text-xs text-text-muted uppercase tracking-wider">평균 타/분</div>
-                    </Card>
-                </Tooltip>
-                <Tooltip content={METRIC_TOOLTIPS.avgAccuracy} position="bottom">
-                    <Card variant="elevated" className="p-6 text-center cursor-help">
-                        <div className="text-3xl font-bold text-info mb-1">{stats.avgAccuracy}%</div>
-                        <div className="text-xs text-text-muted uppercase tracking-wider">평균 정확도</div>
-                    </Card>
-                </Tooltip>
-                <Tooltip content={METRIC_TOOLTIPS.avgConsistency} position="bottom">
-                    <Card variant="elevated" className="p-6 text-center cursor-help">
-                        <div className="text-3xl font-bold text-purple-600 mb-1">{stats.avgConsistency}%</div>
-                        <div className="text-xs text-text-muted uppercase tracking-wider">타이핑 일관성</div>
-                    </Card>
-                </Tooltip>
-            </div>
-
-            {/* 확장 통계 (Healthcare 데이터) */}
-            {stats.totalSessions > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Tooltip content={METRIC_TOOLTIPS.avgHesitation} position="bottom">
-                        <Card variant="flat" className="p-4 text-center bg-bg-highlight cursor-help">
-                            <div className="text-2xl font-bold text-orange-600 mb-1">{stats.avgHesitation}</div>
-                            <div className="text-xs text-text-muted uppercase tracking-wider">평균 망설임</div>
+            {/* Stats Overview - 통계 카드 */}
+            <div className="space-y-4">
+                {/* 기본 통계 */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-start">
+                    <Tooltip content={METRIC_TOOLTIPS.totalSessions}>
+                        <Card variant="elevated" className="w-full p-4 text-center cursor-help">
+                            <div className="text-2xl font-bold text-primary mb-0.5">{stats.totalSessions}</div>
+                            <div className="text-xs text-text-muted">전체 세션</div>
                         </Card>
                     </Tooltip>
-                    <Tooltip content={METRIC_TOOLTIPS.rhythm} position="bottom">
-                        <Card variant="flat" className="p-4 text-center bg-bg-highlight cursor-help">
-                            <div className="text-2xl font-bold text-teal-600 mb-1">{stats.avgRhythm}ms</div>
-                            <div className="text-xs text-text-muted uppercase tracking-wider">평균 리듬</div>
+                    <Tooltip content={METRIC_TOOLTIPS.avgWpm}>
+                        <Card variant="elevated" className="w-full p-4 text-center cursor-help">
+                            <div className="text-2xl font-bold text-secondary mb-0.5">{stats.avgWpm}</div>
+                            <div className="text-xs text-text-muted">평균 타/분</div>
                         </Card>
                     </Tooltip>
-                    <Tooltip content={METRIC_TOOLTIPS.avgDwellTime} position="bottom">
-                        <Card variant="flat" className="p-4 text-center bg-bg-highlight cursor-help">
-                            <div className="text-2xl font-bold text-indigo-600 mb-1">{stats.avgDwellTime}ms</div>
-                            <div className="text-xs text-text-muted uppercase tracking-wider">키 누름 시간</div>
+                    <Tooltip content={METRIC_TOOLTIPS.avgAccuracy}>
+                        <Card variant="elevated" className="w-full p-4 text-center cursor-help">
+                            <div className="text-2xl font-bold text-info mb-0.5">{stats.avgAccuracy}%</div>
+                            <div className="text-xs text-text-muted">평균 정확도</div>
                         </Card>
                     </Tooltip>
-                    <Tooltip content={METRIC_TOOLTIPS.avgFlightTime} position="bottom">
-                        <Card variant="flat" className="p-4 text-center bg-bg-highlight cursor-help">
-                            <div className="text-2xl font-bold text-pink-600 mb-1">{stats.avgFlightTime}ms</div>
-                            <div className="text-xs text-text-muted uppercase tracking-wider">키 전환 시간</div>
+                    <Tooltip content={METRIC_TOOLTIPS.avgConsistency}>
+                        <Card variant="elevated" className="w-full p-4 text-center cursor-help">
+                            <div className="text-2xl font-bold text-purple-600 mb-0.5">{stats.avgConsistency}%</div>
+                            <div className="text-xs text-text-muted">타이핑 일관성</div>
                         </Card>
                     </Tooltip>
                 </div>
-            )}
+
+                {/* 확장 통계 (Healthcare 데이터) */}
+                {stats.totalSessions > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-start">
+                        <Tooltip content={METRIC_TOOLTIPS.avgHesitation}>
+                            <Card variant="flat" className="w-full p-3 text-center bg-bg-highlight cursor-help">
+                                <div className="text-xl font-bold text-orange-600 mb-0.5">{stats.avgHesitation}</div>
+                                <div className="text-xs text-text-muted">평균 망설임</div>
+                            </Card>
+                        </Tooltip>
+                        <Tooltip content={METRIC_TOOLTIPS.rhythm}>
+                            <Card variant="flat" className="w-full p-3 text-center bg-bg-highlight cursor-help">
+                                <div className="text-xl font-bold text-teal-600 mb-0.5">{stats.avgRhythm}ms</div>
+                                <div className="text-xs text-text-muted">평균 리듬</div>
+                            </Card>
+                        </Tooltip>
+                        <Tooltip content={METRIC_TOOLTIPS.avgDwellTime}>
+                            <Card variant="flat" className="w-full p-3 text-center bg-bg-highlight cursor-help">
+                                <div className="text-xl font-bold text-indigo-600 mb-0.5">{stats.avgDwellTime}ms</div>
+                                <div className="text-xs text-text-muted">키 누름 시간</div>
+                            </Card>
+                        </Tooltip>
+                        <Tooltip content={METRIC_TOOLTIPS.avgFlightTime}>
+                            <Card variant="flat" className="w-full p-3 text-center bg-bg-highlight cursor-help">
+                                <div className="text-xl font-bold text-pink-600 mb-0.5">{stats.avgFlightTime}ms</div>
+                                <div className="text-xs text-text-muted">키 전환 시간</div>
+                            </Card>
+                        </Tooltip>
+                    </div>
+                )}
+            </div>
 
             {/* Main Content Grid */}
             <div className="grid lg:grid-cols-3 gap-8">

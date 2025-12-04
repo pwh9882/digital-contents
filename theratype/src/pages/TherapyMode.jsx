@@ -190,52 +190,44 @@ const TherapyMode = () => {
       {/* 오늘의 세션 통계 */}
       {todayStats.count > 0 && (
         <Card variant="flat" className="bg-bg-highlight/50 border-border-base animate-fade-in">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4">
-            <div className="text-xs text-text-muted font-medium uppercase tracking-wider">
-              오늘의 기록 ({todayStats.count}세션 완료)
+          <div className="p-4 space-y-3">
+            <div className="text-xs text-text-muted font-medium uppercase tracking-wider text-center md:text-left">
+              오늘의 기록 ({todayStats.count}세션)
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-              <Tooltip content={METRIC_TOOLTIPS.typingSpeed}>
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+              <Tooltip content={METRIC_TOOLTIPS.typingSpeed} inline>
                 <div className="text-center cursor-help">
                   <div className="text-lg font-bold text-primary font-mono">{todayStats.avgWpm}</div>
-                  <div className="text-xs text-text-muted">평균 타/분</div>
+                  <div className="text-xs text-text-muted whitespace-nowrap">타/분</div>
                 </div>
               </Tooltip>
-              <div className="w-px bg-border-base h-8 hidden md:block" />
-              <Tooltip content={METRIC_TOOLTIPS.accuracy}>
+              <Tooltip content={METRIC_TOOLTIPS.accuracy} inline>
                 <div className="text-center cursor-help">
                   <div className="text-lg font-bold text-secondary font-mono">{todayStats.avgAccuracy}%</div>
-                  <div className="text-xs text-text-muted">평균 정확도</div>
+                  <div className="text-xs text-text-muted whitespace-nowrap">정확도</div>
                 </div>
               </Tooltip>
-              <div className="w-px bg-border-base h-8 hidden md:block" />
-              <Tooltip content={METRIC_TOOLTIPS.totalHesitation}>
+              <Tooltip content={METRIC_TOOLTIPS.totalHesitation} inline>
                 <div className="text-center cursor-help">
                   <div className="text-lg font-bold text-orange-600 font-mono">{todayStats.totalHesitation}</div>
-                  <div className="text-xs text-text-muted">총 망설임</div>
+                  <div className="text-xs text-text-muted whitespace-nowrap">망설임</div>
                 </div>
               </Tooltip>
               {todayStats.avgConsistency !== null && (
-                <>
-                  <div className="w-px bg-border-base h-8 hidden md:block" />
-                  <Tooltip content={METRIC_TOOLTIPS.consistency}>
-                    <div className="text-center cursor-help">
-                      <div className="text-lg font-bold text-purple-600 font-mono">{todayStats.avgConsistency}%</div>
-                      <div className="text-xs text-text-muted">일관성</div>
-                    </div>
-                  </Tooltip>
-                </>
+                <Tooltip content={METRIC_TOOLTIPS.consistency} inline>
+                  <div className="text-center cursor-help">
+                    <div className="text-lg font-bold text-purple-600 font-mono">{todayStats.avgConsistency}%</div>
+                    <div className="text-xs text-text-muted whitespace-nowrap">일관성</div>
+                  </div>
+                </Tooltip>
               )}
               {todayStats.avgDwellTime !== null && (
-                <>
-                  <div className="w-px bg-border-base h-8 hidden md:block" />
-                  <Tooltip content={METRIC_TOOLTIPS.dwellTime}>
-                    <div className="text-center cursor-help">
-                      <div className="text-lg font-bold text-teal-600 font-mono">{todayStats.avgDwellTime}ms</div>
-                      <div className="text-xs text-text-muted">키 누름</div>
-                    </div>
-                  </Tooltip>
-                </>
+                <Tooltip content={METRIC_TOOLTIPS.dwellTime} inline>
+                  <div className="text-center cursor-help">
+                    <div className="text-lg font-bold text-teal-600 font-mono">{todayStats.avgDwellTime}ms</div>
+                    <div className="text-xs text-text-muted whitespace-nowrap">키누름</div>
+                  </div>
+                </Tooltip>
               )}
             </div>
           </div>

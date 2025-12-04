@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { modesConfig } from '../data/modesConfig';
-import ModeCard from '../components/hub/ModeCard';
-import Card from '../components/common/Card';
-import Button from '../components/common/Button';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import ModeCard from "../components/hub/ModeCard";
+import Card from "../components/common/Card";
+import Button from "../components/common/Button";
+import { Link } from "react-router-dom";
 
 /**
  * MainHub Page
@@ -12,57 +11,18 @@ import { Link } from 'react-router-dom';
  * "Your Personal Growth Space" 컨셉으로 재설계
  */
 const MainHub = () => {
-  const [progressData, setProgressData] = useState({});
-  const [greeting, setGreeting] = useState('');
+  const [greeting, setGreeting] = useState("");
 
   useEffect(() => {
     // 시간대에 따른 인사말 설정
     const hour = new Date().getHours();
     if (hour < 12) {
-      setGreeting('Good Morning');
+      setGreeting("Good Morning");
     } else if (hour < 18) {
-      setGreeting('Good Afternoon');
+      setGreeting("Good Afternoon");
     } else {
-      setGreeting('Good Evening');
+      setGreeting("Good Evening");
     }
-
-    // localStorage에서 진행 상태 확인
-    const insightResults = localStorage.getItem('insightResults');
-    const therapySessions = localStorage.getItem('therapySessions');
-
-    const progress = {};
-
-    // Insight Mode 진행도 계산
-    if (insightResults) {
-      try {
-        const results = JSON.parse(insightResults);
-        if (results.selections && Array.isArray(results.selections)) {
-          const completionRate = (results.selections.length / 10) * 100;
-          progress.insight = {
-            progress: completionRate,
-            completed: completionRate === 100,
-          };
-        }
-      } catch (e) {
-        console.error('Error parsing insightResults:', e);
-      }
-    }
-
-    // Therapy Mode 사용 여부 확인
-    if (therapySessions) {
-      try {
-        const sessions = JSON.parse(therapySessions);
-        if (sessions.sessions && sessions.sessions.length > 0) {
-          progress.therapy = {
-            hasUsed: true,
-          };
-        }
-      } catch (e) {
-        console.error('Error parsing therapySessions:', e);
-      }
-    }
-
-    setProgressData(progress);
   }, []);
 
   return (
@@ -78,9 +38,13 @@ const MainHub = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="secondary" size="sm" className="shadow-soft">Daily Check-in</Button>
+          <Button variant="secondary" size="sm" className="shadow-soft">
+            Daily Check-in
+          </Button>
           <Link to="/dashboard">
-            <Button variant="primary" size="sm" className="shadow-soft">View Progress</Button>
+            <Button variant="primary" size="sm" className="shadow-soft">
+              View Progress
+            </Button>
           </Link>
         </div>
       </div>
@@ -99,9 +63,15 @@ const MainHub = () => {
             "The only way out is through."
           </blockquote>
           <div className="flex items-center justify-between">
-            <cite className="text-primary-100 not-italic text-sm">- Robert Frost</cite>
+            <cite className="text-primary-100 not-italic text-sm">
+              - Robert Frost
+            </cite>
             <Link to="/therapy">
-              <Button variant="secondary" size="sm" className="shadow-lg shadow-black/20 border-none">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="shadow-lg shadow-black/20 border-none"
+              >
                 Reflect on this
               </Button>
             </Link>
@@ -138,7 +108,7 @@ const MainHub = () => {
             progress={0}
           />
           <ModeCard
-            title="WoW Mode"
+            title="Recap Mode"
             description="Free-form writing with AI-powered emotional analysis."
             icon="✍️"
             route="/journal"
@@ -160,17 +130,25 @@ const MainHub = () => {
           <div className="space-y-3">
             <div className="p-3 bg-bg-highlight rounded-lg border border-border-base">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-bold text-text-main">The Caregiver</span>
+                <span className="text-sm font-bold text-text-main">
+                  The Caregiver
+                </span>
                 <span className="text-xs text-text-muted">2 days ago</span>
               </div>
-              <p className="text-xs text-text-muted">High empathy detected in recent sessions.</p>
+              <p className="text-xs text-text-muted">
+                High empathy detected in recent sessions.
+              </p>
             </div>
             <div className="p-3 bg-bg-highlight rounded-lg border border-border-base">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-bold text-text-main">Focus Improved</span>
+                <span className="text-sm font-bold text-text-main">
+                  Focus Improved
+                </span>
                 <span className="text-xs text-text-muted">5 days ago</span>
               </div>
-              <p className="text-xs text-text-muted">Typing accuracy increased by 12%.</p>
+              <p className="text-xs text-text-muted">
+                Typing accuracy increased by 12%.
+              </p>
             </div>
           </div>
         </Card>

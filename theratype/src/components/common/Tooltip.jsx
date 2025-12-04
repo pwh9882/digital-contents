@@ -4,19 +4,27 @@ import { useState } from 'react';
  * Tooltip 컴포넌트
  * 마우스 호버 시 설명을 표시하는 툴팁
  */
-const Tooltip = ({ children, content, position = 'top' }) => {
+const Tooltip = ({ children, content, position = 'top', className = '', inline = false }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   if (!content) {
     return children;
   }
 
-  // 위치별 클래스
+  // 위치별 클래스 (기본 위치)
   const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-3',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-3',
+    left: 'right-full top-1/2 -translate-y-1/2 mr-3',
+    right: 'left-full top-1/2 -translate-y-1/2 ml-3',
+  };
+
+  // 등장 애니메이션 클래스 (fade + slide)
+  const animationClasses = {
+    top: isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1',
+    bottom: isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1',
+    left: isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-1',
+    right: isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1',
   };
 
   // 화살표 위치별 클래스
@@ -27,9 +35,14 @@ const Tooltip = ({ children, content, position = 'top' }) => {
     right: 'right-full top-1/2 -translate-y-1/2 border-r-bg-surface border-y-transparent border-l-transparent',
   };
 
+  // inline: 텍스트 내 인라인 사용, 기본: 블록 레벨 (그리드/카드 등)
+  // w-full: 부모(Grid 셀) 너비에 맞춤
+  // h-fit: 높이는 컨텐츠에 맞춤 (Grid stretch 방지)
+  const displayClass = inline ? 'inline-flex' : 'flex w-full h-fit';
+
   return (
     <div
-      className="relative inline-flex"
+      className={`relative ${displayClass} ${className}`}
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
     >
@@ -39,12 +52,13 @@ const Tooltip = ({ children, content, position = 'top' }) => {
       <div
         className={`
           absolute z-50 px-3 py-2
-          bg-bg-surface text-text-main text-xs
-          rounded-lg shadow-lg border border-border-base
-          whitespace-nowrap
-          transition-all duration-200
+          bg-bg-surface text-text-main text-xs font-medium
+          rounded-lg shadow-xl border border-border-base
+          whitespace-nowrap pointer-events-none
+          transition-all duration-200 ease-out delay-150
           ${positionClasses[position]}
-          ${isVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}
+          ${animationClasses[position]}
+          ${isVisible ? 'visible' : 'invisible'}
         `}
       >
         {content}

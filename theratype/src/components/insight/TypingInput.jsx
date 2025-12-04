@@ -29,11 +29,68 @@ const TypingInput = ({ targetSentence, onComplete }) => {
 
   // 컴포넌트 마운트 시 collector 초기화
   useEffect(() => {
-    collectorRef.current.reset();
+    const collector = collectorRef.current;
+    collector.reset();
     return () => {
-      collectorRef.current.stop();
+      collector.stop();
     };
   }, [targetSentence]);
+
+  // 최신 값을 ref로 유지 (무한 루프 방지)
+  const stateRef = useRef({ typedText, keystrokeLogs, startTime });
+  stateRef.current = { typedText, keystrokeLogs, startTime };
+
+  // 완료 처리 함수 (안정적인 참조 유지)
+  const handleComplete = useCallback(() => {
+    const { typedText: currentTyped, keystrokeLogs: currentLogs, startTime: currentStart } = stateRef.current;
+    if (!currentStart) return;
+
+    const endTime = Date.now();
+    const duration = endTime - currentStart;
+
+    const finalTypingSpeed = calculateTypingSpeed(currentTyped, duration);
+    const finalAccuracy = calculateAccuracy(targetSentence, currentTyped, false);
+
+    const enhancedKeystrokes = collectorRef.current.getKeystrokes();
+    const keystrokeMetrics = collectorRef.current.getSessionMetrics();
+
+    const hesitation = analyzeHesitation(currentLogs);
+    const rhythm = analyzeTypingRhythm(currentLogs);
+    const isAbnormal = detectAbnormalWPM(finalTypingSpeed, currentLogs);
+
+    const analytics = {
+      hesitationCount: hesitation.hesitationCount,
+      avgHesitationTime: hesitation.avgHesitationTime,
+      totalPauseTime: hesitation.totalPauseTime,
+      rhythm: rhythm.rhythm,
+      consistency: rhythm.consistency,
+      isAbnormal,
+      avgDwellTime: keystrokeMetrics.avgDwellTime,
+      avgFlightTime: keystrokeMetrics.avgFlightTime,
+      dwellTimeStdDev: keystrokeMetrics.dwellTimeStdDev,
+      flightTimeStdDev: keystrokeMetrics.flightTimeStdDev,
+      errorCount: keystrokeMetrics.errorCount,
+      backspaceCount: keystrokeMetrics.backspaceCount,
+      errorRate: keystrokeMetrics.errorRate,
+      totalKeystrokes: keystrokeMetrics.totalKeystrokes,
+    };
+
+    const sessionData = {
+      target: targetSentence,
+      typed: currentTyped,
+      startTime: currentStart,
+      endTime,
+      duration,
+      keystrokeLogs: currentLogs,
+      keystrokes: enhancedKeystrokes,
+      typingSpeed: finalTypingSpeed,
+      wpm: finalTypingSpeed,
+      accuracy: finalAccuracy,
+      analytics,
+    };
+
+    onComplete(sessionData);
+  }, [targetSentence, onComplete]);
 
   // 타이핑 시작 시간 설정 및 완료 체크
   useEffect(() => {
@@ -52,7 +109,6 @@ const TypingInput = ({ targetSentence, onComplete }) => {
     }
 
     if (typedText === targetSentence) {
-      // 완료 시 최종 통계 계산
       const elapsed = Date.now() - (startTime || Date.now());
       const finalSpeed = calculateTypingSpeed(typedText, elapsed);
       const finalAccuracy = calculateAccuracy(targetSentence, typedText, false);
@@ -61,7 +117,7 @@ const TypingInput = ({ targetSentence, onComplete }) => {
       collectorRef.current.stop();
       handleComplete();
     }
-  }, [typedText, targetSentence, startTime]);
+  }, [typedText, targetSentence, startTime, handleComplete]);
 
   // typedText 변경 시 즉시 통계 갱신
   useEffect(() => {
@@ -87,66 +143,6 @@ const TypingInput = ({ targetSentence, onComplete }) => {
 
     return () => clearInterval(interval);
   }, [startTime, typedText]);
-
-  const handleComplete = useCallback(() => {
-    if (!startTime) return;
-
-    const endTime = Date.now();
-    const duration = endTime - startTime;
-
-    // 최종 통계를 여기서 직접 계산 (state는 비동기 업데이트라 신뢰할 수 없음)
-    const finalTypingSpeed = calculateTypingSpeed(typedText, duration);
-    const finalAccuracy = calculateAccuracy(targetSentence, typedText, false);
-
-    // 확장 keystroke 데이터 가져오기
-    const enhancedKeystrokes = collectorRef.current.getKeystrokes();
-    const keystrokeMetrics = collectorRef.current.getSessionMetrics();
-
-    // 기존 분석 함수 활용
-    const hesitation = analyzeHesitation(keystrokeLogs);
-    const rhythm = analyzeTypingRhythm(keystrokeLogs);
-    const isAbnormal = detectAbnormalWPM(finalTypingSpeed, keystrokeLogs);
-
-    // 통합 analytics 객체
-    const analytics = {
-      // 기존 분석 결과
-      hesitationCount: hesitation.hesitationCount,
-      avgHesitationTime: hesitation.avgHesitationTime,
-      totalPauseTime: hesitation.totalPauseTime,
-      rhythm: rhythm.rhythm,
-      consistency: rhythm.consistency,
-      isAbnormal,
-      // 확장 분석 결과 (KeystrokeCollector)
-      avgDwellTime: keystrokeMetrics.avgDwellTime,
-      avgFlightTime: keystrokeMetrics.avgFlightTime,
-      dwellTimeStdDev: keystrokeMetrics.dwellTimeStdDev,
-      flightTimeStdDev: keystrokeMetrics.flightTimeStdDev,
-      errorCount: keystrokeMetrics.errorCount,
-      backspaceCount: keystrokeMetrics.backspaceCount,
-      errorRate: keystrokeMetrics.errorRate,
-      totalKeystrokes: keystrokeMetrics.totalKeystrokes,
-    };
-
-    const sessionData = {
-      target: targetSentence,
-      typed: typedText,
-      startTime,
-      endTime,
-      duration,
-      // 기존 호환용 keystroke logs
-      keystrokeLogs,
-      // 확장 keystroke 데이터
-      keystrokes: enhancedKeystrokes,
-      // 성능 메트릭 (직접 계산한 값 사용)
-      typingSpeed: finalTypingSpeed,
-      wpm: finalTypingSpeed,
-      accuracy: finalAccuracy,
-      // 통합 분석 결과
-      analytics,
-    };
-
-    onComplete(sessionData);
-  }, [targetSentence, typedText, startTime, keystrokeLogs, onComplete]);
 
   const handleKeyDown = (e) => {
     if (isComposing) return;
@@ -207,50 +203,77 @@ const TypingInput = ({ targetSentence, onComplete }) => {
       {/* Target Sentence Display */}
       <div className="relative p-8 bg-bg-surface rounded-2xl shadow-soft border border-border-base text-center">
         <div className="text-2xl md:text-3xl font-display font-medium leading-relaxed">
-          {targetSentence.split('').map((char, index) => {
-            // Current cursor position indicator
-            const isCurrent = index === typedText.length;
-            const isComposingChar = index === typedText.length - 1 && typedText.length > 0;
-            const charFeedback = feedback[index];
-            const isSpace = char === ' ';
+          {(() => {
+            // 단어별로 그룹화하여 단어 중간에서 줄바꿈 방지
+            const words = targetSentence.split(' ');
+            let charIndex = 0;
 
-            let colorClass = 'text-text-muted/40'; // 미입력 글자
-            let bgClass = '';
+            return words.map((word, wordIdx) => (
+              <span key={wordIdx} className="inline-block whitespace-nowrap">
+                {word.split('').map((char) => {
+                  const index = charIndex++;
+                  const isCurrent = index === typedText.length;
+                  const isComposingChar = index === typedText.length - 1 && typedText.length > 0;
+                  const charFeedback = feedback[index];
 
-            if (charFeedback === 'correct') {
-              colorClass = 'text-text-main';
-            } else if (charFeedback === 'composing') {
-              // 조합 중이며 올바른 방향으로 진행 중 - 더 눈에 띄게
-              colorClass = 'text-primary-main font-semibold';
-              bgClass = 'bg-primary-main/20 rounded-sm';
-            } else if (charFeedback === 'incorrect') {
-              colorClass = 'text-error font-semibold';
-              bgClass = 'bg-error/15 rounded-sm';
-            } else if (isCurrent) {
-              // 다음에 입력할 글자 강조
-              colorClass = 'text-text-main/70';
-              bgClass = 'bg-primary-main/10 rounded-sm';
-            }
+                  let colorClass = 'text-text-muted/40';
+                  let bgClass = '';
 
-            return (
-              <span
-                key={index}
-                className={`relative inline-block transition-all duration-150 ${colorClass} ${bgClass}`}
-                style={{ minWidth: isSpace ? '0.5em' : undefined }}
-              >
-                {/* 공백은 특수 문자로 표시 */}
-                {isSpace ? '\u00A0' : char}
-                {/* 현재 커서 위치 - 더 눈에 띄는 애니메이션 */}
-                {isCurrent && (
-                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-main rounded-full animate-pulse shadow-lg shadow-primary-main/50" />
-                )}
-                {/* 조합 중인 글자 하단 표시 */}
-                {isComposingChar && charFeedback === 'composing' && (
-                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-main rounded-full" />
-                )}
+                  if (charFeedback === 'correct') {
+                    colorClass = 'text-text-main';
+                  } else if (charFeedback === 'composing') {
+                    colorClass = 'text-primary-main font-semibold';
+                    bgClass = 'bg-primary-main/20 rounded-sm';
+                  } else if (charFeedback === 'incorrect') {
+                    colorClass = 'text-error font-semibold';
+                    bgClass = 'bg-error/15 rounded-sm';
+                  } else if (isCurrent) {
+                    colorClass = 'text-text-main/70';
+                    bgClass = 'bg-primary-main/10 rounded-sm';
+                  }
+
+                  return (
+                    <span
+                      key={index}
+                      className={`relative inline-block transition-all duration-150 ${colorClass} ${bgClass}`}
+                    >
+                      {char}
+                      {isCurrent && (
+                        <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-main rounded-full animate-pulse shadow-lg shadow-primary-main/50" />
+                      )}
+                      {isComposingChar && charFeedback === 'composing' && (
+                        <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-main rounded-full" />
+                      )}
+                    </span>
+                  );
+                })}
+                {/* 단어 사이 공백 (마지막 단어 제외) */}
+                {wordIdx < words.length - 1 && (() => {
+                  const spaceIndex = charIndex++;
+                  const isCurrent = spaceIndex === typedText.length;
+                  const charFeedback = feedback[spaceIndex];
+
+                  let colorClass = 'text-text-muted/40';
+                  if (charFeedback === 'correct') colorClass = 'text-text-main';
+                  else if (charFeedback === 'incorrect') colorClass = 'text-error';
+                  else if (isCurrent) colorClass = 'text-text-main/70';
+
+                  return (
+                    <span
+                      key={`space-${spaceIndex}`}
+                      className={`relative inline-block transition-all duration-150 ${colorClass}`}
+                      style={{ minWidth: '0.5em' }}
+                    >
+                      {'\u00A0'}
+                      {isCurrent && (
+                        <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-main rounded-full animate-pulse shadow-lg shadow-primary-main/50" />
+                      )}
+                    </span>
+                  );
+                })()}
               </span>
-            );
-          })}
+            ));
+          })()}
         </div>
         {/* 입력 진행 상태 표시 */}
         <div className="mt-4 flex justify-center items-center gap-2 text-xs text-text-muted">
@@ -281,14 +304,14 @@ const TypingInput = ({ targetSentence, onComplete }) => {
 
       {/* Stats */}
       <div className="flex justify-center gap-12 pt-4">
-        <Tooltip content={METRIC_TOOLTIPS.typingSpeed} position="bottom">
+        <Tooltip content={METRIC_TOOLTIPS.typingSpeed} position="bottom" inline>
           <div className="text-center cursor-help">
             <div className="text-3xl font-bold text-primary font-mono">{typingSpeed}</div>
             <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">타/분</div>
           </div>
         </Tooltip>
         <div className="w-px bg-border-base h-12" />
-        <Tooltip content={METRIC_TOOLTIPS.accuracy} position="bottom">
+        <Tooltip content={METRIC_TOOLTIPS.accuracy} position="bottom" inline>
           <div className="text-center cursor-help">
             <div className="text-3xl font-bold text-secondary font-mono">{accuracy}%</div>
             <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">정확도</div>

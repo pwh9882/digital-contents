@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { insightSentences } from '../data/insightSentences';
 import { assignProfile } from '../data/therapySentences';
 import { saveSession } from '../utils/storageManager';
@@ -18,7 +18,6 @@ const InsightMode = () => {
   const [isComplete, setIsComplete] = useState(false);
 
   const currentPair = insightSentences[currentIndex];
-  const progress = ((currentIndex) / insightSentences.length) * 100;
 
   // 현재까지의 누적 통계 계산
   const sessionStats = useMemo(() => {
@@ -49,6 +48,12 @@ const InsightMode = () => {
     };
   }, [selections]);
 
+  const handleSelect = useCallback((side) => {
+    setSelectedSide(side);
+    const choice = side === 'A' ? currentPair.pairA : currentPair.pairB;
+    setSelectedSentence(choice.text);
+  }, [currentPair]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -71,13 +76,7 @@ const InsightMode = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedSentence]);
-
-  const handleSelect = (side) => {
-    setSelectedSide(side);
-    const choice = side === 'A' ? currentPair.pairA : currentPair.pairB;
-    setSelectedSentence(choice.text);
-  };
+  }, [selectedSentence, handleSelect]);
 
   const handleTypingComplete = (sessionData) => {
     const choice = selectedSide === 'A' ? currentPair.pairA : currentPair.pairB;

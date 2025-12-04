@@ -83,9 +83,9 @@ export class KeystrokeCollector {
   /**
    * keyup 이벤트 처리
    * @param {KeyboardEvent} e - 키보드 이벤트
-   * @param {string} currentTyped - 현재까지 입력된 텍스트
+   * @param {string} _currentTyped - 현재까지 입력된 텍스트 (향후 확장용)
    */
-  onKeyUp(e, currentTyped = '') {
+  onKeyUp(e, _currentTyped = '') {
     if (!this.isActive) return;
 
     const timestamp = Date.now();
@@ -141,9 +141,9 @@ export class KeystrokeCollector {
 
   /**
    * IME 조합 종료 시 호출
-   * @param {string} composedText - 조합 완료된 텍스트
+   * @param {string} _composedText - 조합 완료된 텍스트 (향후 확장용)
    */
-  onCompositionEnd(composedText) {
+  onCompositionEnd(_composedText) {
     // 조합 완료 시 특별한 처리 필요 시 여기에 추가
   }
 

@@ -316,8 +316,8 @@ export const calculateMasteryProgress = (sessionHistory, profileKey) => {
   profile.sentences.forEach((sentence) => {
     const attempts = sessionHistory.filter((s) => s.sentenceId === sentence.id);
     const successfulAttempts = attempts.filter(
-      // 정확도 90% 이상, 타/분 100 이상 (또는 하위 호환 wpm >= 20)
-      (s) => s.accuracy >= 90 && (s.typingSpeed >= 100 || s.wpm >= 20)
+      // 정확도 90% 이상, 타/분 100 이상
+      (s) => s.accuracy >= 90 && (s.typingSpeed || s.wpm) >= 100
     );
 
     if (successfulAttempts.length >= 3) {

@@ -13,7 +13,7 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
 
   const getSuccessfulAttempts = (sentenceId) => {
     return sessionHistory.filter(
-      s => s.sentenceId === sentenceId && s.accuracy >= 90 && s.wpm >= 20
+      s => s.sentenceId === sentenceId && s.accuracy >= 90 && (s.typingSpeed || s.wpm) >= 100
     );
   };
 
@@ -97,13 +97,13 @@ const ProgressTracker = ({ profileKey, sessionHistory }) => {
         </p>
         <div className="flex flex-wrap gap-2">
           <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
-            90% Accuracy
+            90% 정확도
           </span>
           <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
-            20+ WPM
+            100+ 타/분
           </span>
           <span className="px-2 py-1 bg-bg-highlight text-text-muted text-xs rounded border border-border-base">
-            3x Success
+            3회 성공
           </span>
         </div>
       </div>

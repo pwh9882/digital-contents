@@ -9,7 +9,6 @@
  * - 향후 백엔드 연동을 위한 export 기능
  */
 
-import { average } from './keystrokeCollector';
 
 // ============================================
 // Storage Keys
@@ -411,7 +410,7 @@ function getLegacyData(key) {
   try {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

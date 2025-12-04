@@ -83,7 +83,7 @@ const Layout = ({ children }) => {
                                 `}
                             >
                                 <span className="text-xl group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
-                                <span className={`ml-3 font-medium transition-opacity duration-200 ${isActive ? 'font-bold' : ''} ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 ml-0 overflow-hidden'}`}>
+                                <span className={`font-medium transition-opacity duration-200 ${isActive ? 'font-bold' : ''} ${isExpanded ? 'ml-3 opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
                                     {item.label}
                                 </span>
                             </Link>
@@ -105,7 +105,7 @@ const Layout = ({ children }) => {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                             G
                         </div>
-                        <div className={`ml-3 overflow-hidden transition-opacity duration-200 ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 ml-0'}`}>
+                        <div className={`overflow-hidden transition-opacity duration-200 ${isExpanded ? 'ml-3 opacity-100' : 'opacity-0 w-0'}`}>
                             <p className="text-sm font-bold text-text-main truncate">Guest User</p>
                             <p className="text-xs text-text-muted truncate">Free Plan</p>
                         </div>

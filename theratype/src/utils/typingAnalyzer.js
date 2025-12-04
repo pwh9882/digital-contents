@@ -22,6 +22,32 @@ const COMPAT_JAMO_TO_CHOSEONG = {
   'ㅅ': 9, 'ㅆ': 10, 'ㅇ': 11, 'ㅈ': 12, 'ㅉ': 13, 'ㅊ': 14, 'ㅋ': 15, 'ㅌ': 16, 'ㅍ': 17, 'ㅎ': 18
 };
 
+// 복합 모음 → 구성 요소 매핑 (IME 입력 순서)
+const COMPOUND_JUNGSEONG = {
+  'ㅘ': ['ㅗ', 'ㅏ'],
+  'ㅙ': ['ㅗ', 'ㅐ'],
+  'ㅚ': ['ㅗ', 'ㅣ'],
+  'ㅝ': ['ㅜ', 'ㅓ'],
+  'ㅞ': ['ㅜ', 'ㅔ'],
+  'ㅟ': ['ㅜ', 'ㅣ'],
+  'ㅢ': ['ㅡ', 'ㅣ'],
+};
+
+// 복합 받침 → 구성 요소 매핑 (IME 입력 순서)
+const COMPOUND_JONGSEONG = {
+  'ㄳ': ['ㄱ', 'ㅅ'],
+  'ㄵ': ['ㄴ', 'ㅈ'],
+  'ㄶ': ['ㄴ', 'ㅎ'],
+  'ㄺ': ['ㄹ', 'ㄱ'],
+  'ㄻ': ['ㄹ', 'ㅁ'],
+  'ㄼ': ['ㄹ', 'ㅂ'],
+  'ㄽ': ['ㄹ', 'ㅅ'],
+  'ㄾ': ['ㄹ', 'ㅌ'],
+  'ㄿ': ['ㄹ', 'ㅍ'],
+  'ㅀ': ['ㄹ', 'ㅎ'],
+  'ㅄ': ['ㅂ', 'ㅅ'],
+};
+
 /**
  * 완성형 한글인지 확인
  */
@@ -126,15 +152,41 @@ export const calculateWPM = (charCount, timeMs) => {
 };
 
 /**
- * 두 자모 배열이 접두사 관계인지 확인
+ * 자모 배열을 IME 입력 순서대로 완전히 분해
+ * 복합 모음/받침을 구성 요소로 분해
+ * 예: [ㅁ, ㅝ] → [ㅁ, ㅜ, ㅓ]
+ * 예: [ㅅ, ㅏ, ㄻ] → [ㅅ, ㅏ, ㄹ, ㅁ]
+ * @param {string[]} jamo - 기본 자모 배열
+ * @returns {string[]} 완전 분해된 자모 배열
+ */
+const expandCompoundJamo = (jamo) => {
+  const result = [];
+  for (const j of jamo) {
+    if (COMPOUND_JUNGSEONG[j]) {
+      result.push(...COMPOUND_JUNGSEONG[j]);
+    } else if (COMPOUND_JONGSEONG[j]) {
+      result.push(...COMPOUND_JONGSEONG[j]);
+    } else {
+      result.push(j);
+    }
+  }
+  return result;
+};
+
+/**
+ * 두 자모 배열이 접두사 관계인지 확인 (복합 자모 확장 적용)
  * @param {string[]} prefix - 접두사 후보
  * @param {string[]} full - 전체 자모 배열
  * @returns {boolean} prefix가 full의 접두사이면 true
  */
 const isJamoPrefix = (prefix, full) => {
-  if (prefix.length > full.length) return false;
-  for (let i = 0; i < prefix.length; i++) {
-    if (prefix[i] !== full[i]) return false;
+  // 복합 자모를 구성요소로 확장
+  const expandedPrefix = expandCompoundJamo(prefix);
+  const expandedFull = expandCompoundJamo(full);
+
+  if (expandedPrefix.length > expandedFull.length) return false;
+  for (let i = 0; i < expandedPrefix.length; i++) {
+    if (expandedPrefix[i] !== expandedFull[i]) return false;
   }
   return true;
 };
@@ -210,81 +262,69 @@ export const calculateAccuracy = (target, typed, isComposing = false) => {
 
 /**
  * 실시간 정확도 피드백 (글자별 상태)
- * 한글 조합을 고려하여 마지막 한글 글자는 자모 접두사 일치 시 'composing'으로 표시
+ * 한글 조합을 고려하여 정확한 피드백 제공
+ *
+ * 핵심 로직:
+ * - 입력 자모가 목표 자모와 완전히 같으면 → 'correct'
+ * - 입력 자모가 목표 자모의 접두사이면 → 'composing' (조합 진행 중)
+ * - 입력 자모가 목표 자모보다 많거나 다르면 → 'incorrect'
  *
  * @param {string} target - 목표 문장
  * @param {string} typed - 타이핑한 문장
  * @returns {Array} 각 글자의 상태 배열 ['correct', 'incorrect', 'pending', 'composing']
  */
 export const getCharacterFeedback = (target, typed) => {
-  // 전체 문자열을 자모 단위로 비교하여 빠른 입력 시에도 정확한 피드백 제공
   const feedback = [];
   const typedLen = typed.length;
+  const targetLen = target.length;
 
   if (typedLen === 0) {
-    // 아무것도 입력 안 함
     return target.split('').map(() => 'pending');
   }
 
-  // 전체 문자열을 자모로 분해
-  const targetJamo = [];
-  const targetCharBoundaries = [0]; // 각 글자가 시작되는 자모 인덱스
-  for (const char of target) {
-    const jamo = decomposeHangul(char);
-    targetJamo.push(...jamo);
-    targetCharBoundaries.push(targetJamo.length);
-  }
-
-  const typedJamo = [];
-  const typedCharBoundaries = [0];
-  for (const char of typed) {
-    const jamo = decomposeHangul(char);
-    typedJamo.push(...jamo);
-    typedCharBoundaries.push(typedJamo.length);
-  }
-
-  // 자모 단위로 일치 여부 확인
-  let jamoMatchCount = 0;
-  for (let i = 0; i < typedJamo.length && i < targetJamo.length; i++) {
-    if (typedJamo[i] === targetJamo[i]) {
-      jamoMatchCount++;
-    } else {
-      break; // 순서대로 일치해야 함
-    }
-  }
-
-  // 각 글자별 피드백 결정
-  for (let charIdx = 0; charIdx < target.length; charIdx++) {
-    const charJamoStart = targetCharBoundaries[charIdx];
-    const charJamoEnd = targetCharBoundaries[charIdx + 1];
-
+  for (let charIdx = 0; charIdx < targetLen; charIdx++) {
     if (charIdx >= typedLen) {
-      // 아직 입력 안 한 글자
+      // 아직 입력하지 않은 글자
       feedback.push('pending');
-    } else if (target[charIdx] === typed[charIdx]) {
-      // 완전 일치
-      feedback.push('correct');
-    } else {
-      // 자모 기준으로 해당 글자까지 모두 맞았는지 확인
-      const isFullyMatched = jamoMatchCount >= charJamoEnd;
-      // 부분적으로 맞았는지 (이 글자의 자모 중 일부가 일치)
-      const isPartiallyMatched = jamoMatchCount > charJamoStart && jamoMatchCount < charJamoEnd;
-      // 이전 글자들이 모두 맞고, 이 글자가 현재 입력 중인 글자인지
-      const isPreviousAllMatched = jamoMatchCount >= charJamoStart;
-      const isCurrentOrRecent = charIdx >= typedLen - 1;
+      continue;
+    }
 
-      if (isFullyMatched) {
-        // 자모 기준 완전 일치 (조합 중)
-        feedback.push('composing');
-      } else if (isPartiallyMatched && isCurrentOrRecent) {
-        // 부분 일치 (조합 진행 중)
-        feedback.push('composing');
-      } else if (isPreviousAllMatched && isCurrentOrRecent) {
-        // 이전까지 맞고 현재 글자 입력 중
-        feedback.push('composing');
-      } else {
-        feedback.push('incorrect');
-      }
+    const targetChar = target[charIdx];
+    const typedChar = typed[charIdx];
+
+    // 완전히 동일한 글자
+    if (targetChar === typedChar) {
+      feedback.push('correct');
+      continue;
+    }
+
+    // 자모 단위 비교 (복합 자모 확장 적용)
+    const targetCharJamo = decomposeHangul(targetChar);
+    const typedCharJamo = decomposeHangul(typedChar);
+
+    // 복합 자모 확장 (ㅝ→[ㅜ,ㅓ], ㄻ→[ㄹ,ㅁ] 등)
+    const expandedTarget = expandCompoundJamo(targetCharJamo);
+    const expandedTyped = expandCompoundJamo(typedCharJamo);
+
+    const isLastTypedChar = charIdx === typedLen - 1;
+
+    // 입력 자모가 목표 자모의 접두사인지 확인
+    const isTypedPrefixOfTarget = isJamoPrefix(typedCharJamo, targetCharJamo);
+
+    // 피드백 결정 (각 글자 독립 평가 - 이전 글자 상태에 의존하지 않음)
+    if (isLastTypedChar && isTypedPrefixOfTarget) {
+      // 마지막 글자이고, 입력이 목표의 접두사 → 조합 중
+      feedback.push('composing');
+    } else if (expandedTyped.length > expandedTarget.length) {
+      // 입력 자모가 목표보다 많음 (초과 입력)
+      feedback.push('incorrect');
+    } else if (!isTypedPrefixOfTarget) {
+      // 접두사 관계가 아님 → 틀림
+      feedback.push('incorrect');
+    } else {
+      // 마지막 글자가 아닌데 접두사 관계 (중간 글자가 미완성)
+      // 이 경우도 incorrect로 처리 (이전 글자가 완성되지 않은 상태)
+      feedback.push('incorrect');
     }
   }
 

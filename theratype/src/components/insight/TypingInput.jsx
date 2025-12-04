@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { calculateTypingSpeed, calculateAccuracy, getCharacterFeedback } from '../../utils/typingAnalyzer';
+import {
+  calculateTypingSpeed,
+  calculateAccuracy,
+  getCharacterFeedback,
+  analyzeHesitation,
+  analyzeTypingRhythm,
+  detectAbnormalWPM,
+} from '../../utils/typingAnalyzer';
+import { KeystrokeCollector } from '../../utils/keystrokeCollector';
 
 const TypingInput = ({ targetSentence, onComplete }) => {
   const [typedText, setTypedText] = useState('');
@@ -10,48 +18,116 @@ const TypingInput = ({ targetSentence, onComplete }) => {
   const [isComposing, setIsComposing] = useState(false);
   const inputRef = useRef(null);
 
+  // KeystrokeCollector 인스턴스
+  const collectorRef = useRef(new KeystrokeCollector());
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+  // 컴포넌트 마운트 시 collector 초기화
+  useEffect(() => {
+    collectorRef.current.reset();
+    return () => {
+      collectorRef.current.stop();
+    };
+  }, [targetSentence]);
+
+  // 타이핑 시작 시간 설정 및 완료 체크
   useEffect(() => {
     if (typedText.length === 0) {
       setStartTime(null);
       setKeystrokeLogs([]);
       setTypingSpeed(0);
       setAccuracy(100);
+      collectorRef.current.reset();
       return;
     }
 
     if (!startTime) {
       setStartTime(Date.now());
+      collectorRef.current.start();
     }
-
-    const elapsed = Date.now() - (startTime || Date.now());
-    const currentSpeed = calculateTypingSpeed(typedText, elapsed);
-    const currentAccuracy = calculateAccuracy(targetSentence, typedText, isComposing);
-
-    setTypingSpeed(currentSpeed);
-    setAccuracy(currentAccuracy);
 
     if (typedText === targetSentence) {
+      // 완료 시 최종 통계 계산
+      const elapsed = Date.now() - (startTime || Date.now());
+      const finalSpeed = calculateTypingSpeed(typedText, elapsed);
+      const finalAccuracy = calculateAccuracy(targetSentence, typedText, false);
+      setTypingSpeed(finalSpeed);
+      setAccuracy(finalAccuracy);
+      collectorRef.current.stop();
       handleComplete();
     }
-  }, [typedText, targetSentence, startTime, isComposing]);
+  }, [typedText, targetSentence, startTime]);
+
+  // 1초마다 통계 갱신
+  useEffect(() => {
+    if (!startTime || typedText.length === 0) return;
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const currentSpeed = calculateTypingSpeed(typedText, elapsed);
+      const currentAccuracy = calculateAccuracy(targetSentence, typedText, isComposing);
+
+      setTypingSpeed(currentSpeed);
+      setAccuracy(currentAccuracy);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime, typedText, targetSentence, isComposing]);
 
   const handleComplete = useCallback(() => {
     if (!startTime) return;
 
     const endTime = Date.now();
+    const duration = endTime - startTime;
+
+    // 확장 keystroke 데이터 가져오기
+    const enhancedKeystrokes = collectorRef.current.getKeystrokes();
+    const keystrokeMetrics = collectorRef.current.getSessionMetrics();
+
+    // 기존 분석 함수 활용
+    const hesitation = analyzeHesitation(keystrokeLogs);
+    const rhythm = analyzeTypingRhythm(keystrokeLogs);
+    const isAbnormal = detectAbnormalWPM(typingSpeed, keystrokeLogs);
+
+    // 통합 analytics 객체
+    const analytics = {
+      // 기존 분석 결과
+      hesitationCount: hesitation.hesitationCount,
+      avgHesitationTime: hesitation.avgHesitationTime,
+      totalPauseTime: hesitation.totalPauseTime,
+      rhythm: rhythm.rhythm,
+      consistency: rhythm.consistency,
+      isAbnormal,
+      // 확장 분석 결과 (KeystrokeCollector)
+      avgDwellTime: keystrokeMetrics.avgDwellTime,
+      avgFlightTime: keystrokeMetrics.avgFlightTime,
+      dwellTimeStdDev: keystrokeMetrics.dwellTimeStdDev,
+      flightTimeStdDev: keystrokeMetrics.flightTimeStdDev,
+      errorCount: keystrokeMetrics.errorCount,
+      backspaceCount: keystrokeMetrics.backspaceCount,
+      errorRate: keystrokeMetrics.errorRate,
+      totalKeystrokes: keystrokeMetrics.totalKeystrokes,
+    };
+
     const sessionData = {
       target: targetSentence,
       typed: typedText,
       startTime,
       endTime,
+      duration,
+      // 기존 호환용 keystroke logs
       keystrokeLogs,
+      // 확장 keystroke 데이터
+      keystrokes: enhancedKeystrokes,
+      // 성능 메트릭
       typingSpeed, // 타/분
       wpm: typingSpeed, // 하위 호환성
       accuracy,
+      // 통합 분석 결과
+      analytics,
     };
 
     onComplete(sessionData);
@@ -65,6 +141,13 @@ const TypingInput = ({ targetSentence, onComplete }) => {
       return;
     }
 
+    const currentIndex = typedText.length;
+    const targetChar = targetSentence[currentIndex] || '';
+
+    // KeystrokeCollector에 keydown 기록
+    collectorRef.current.onKeyDown(e, currentIndex, targetChar, typedText);
+
+    // 기존 keystrokeLogs도 유지 (하위 호환성)
     setKeystrokeLogs(prev => [
       ...prev,
       {
@@ -74,16 +157,25 @@ const TypingInput = ({ targetSentence, onComplete }) => {
     ]);
   };
 
+  const handleKeyUp = (e) => {
+    if (isComposing) return;
+
+    // KeystrokeCollector에 keyup 기록
+    collectorRef.current.onKeyUp(e, typedText);
+  };
+
   const handleChange = (e) => {
     setTypedText(e.target.value);
   };
 
   const handleCompositionStart = () => {
     setIsComposing(true);
+    collectorRef.current.onCompositionStart();
   };
 
-  const handleCompositionEnd = () => {
+  const handleCompositionEnd = (e) => {
     setIsComposing(false);
+    collectorRef.current.onCompositionEnd(e.data);
   };
 
   const feedback = getCharacterFeedback(targetSentence, typedText);
@@ -162,6 +254,7 @@ const TypingInput = ({ targetSentence, onComplete }) => {
           value={typedText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
           className="w-full px-6 py-4 text-xl text-center bg-transparent border-b-2 border-border-base focus:border-primary transition-colors placeholder-text-muted/50 font-medium text-text-main"

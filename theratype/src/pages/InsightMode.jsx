@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { insightSentences } from '../data/insightSentences';
 import { assignProfile } from '../data/therapySentences';
+import { saveSession } from '../utils/storageManager';
 import SentencePair from '../components/insight/SentencePair';
 import TypingInput from '../components/insight/TypingInput';
 import InsightResult from '../components/insight/InsightResult';
@@ -47,15 +48,42 @@ const InsightMode = () => {
   };
 
   const handleTypingComplete = (sessionData) => {
+    const choice = selectedSide === 'A' ? currentPair.pairA : currentPair.pairB;
+
     const newSelection = {
       pairId: currentPair.id,
       category: currentPair.category,
       categoryName: currentPair.categoryName,
-      choice: selectedSide === 'A' ? currentPair.pairA : currentPair.pairB,
+      choice,
       wpm: sessionData.wpm,
       accuracy: sessionData.accuracy,
       sessionData,
     };
+
+    // StorageManager를 통해 각 선택을 세션으로 저장
+    saveSession({
+      mode: 'insight',
+      sentenceId: currentPair.id,
+      sentence: choice.text,
+      category: currentPair.category,
+      categoryName: currentPair.categoryName,
+      selectedSide,
+      choice,
+      // 성능 메트릭
+      typingSpeed: sessionData.typingSpeed,
+      wpm: sessionData.wpm,
+      accuracy: sessionData.accuracy,
+      duration: sessionData.duration,
+      // keystroke 데이터
+      keystrokeLogs: sessionData.keystrokeLogs,
+      keystrokes: sessionData.keystrokes,
+      // 분석 결과
+      analytics: sessionData.analytics,
+      // 타임스탬프
+      startTime: sessionData.startTime,
+      endTime: sessionData.endTime,
+      completedAt: new Date().toISOString(),
+    });
 
     const updatedSelections = [...selections, newSelection];
     setSelections(updatedSelections);
@@ -79,6 +107,7 @@ const InsightMode = () => {
       const assignedProfile = assignProfile(categoryScores);
 
       setIsComplete(true);
+      // 기존 localStorage도 업데이트 (하위 호환성)
       localStorage.setItem('insightResults', JSON.stringify({
         selections: updatedSelections,
         completedAt: new Date().toISOString(),

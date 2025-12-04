@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { recommendNextSentence, calculateMasteryProgress } from '../data/therapySentences';
+import { saveSession, getSessions, migrateIfNeeded } from '../utils/storageManager';
 import ProfileBadge from '../components/therapy/ProfileBadge';
 import TherapySentence from '../components/therapy/TherapySentence';
 import ProgressTracker from '../components/therapy/ProgressTracker';
@@ -17,6 +18,9 @@ const TherapyMode = () => {
 
   // localStorage에서 프로파일 및 세션 기록 로드
   useEffect(() => {
+    // 기존 데이터 마이그레이션 (최초 1회)
+    migrateIfNeeded();
+
     const insightResults = localStorage.getItem('insightResults');
     let profile = null;
 
@@ -37,19 +41,11 @@ const TherapyMode = () => {
 
     setProfileKey(profile);
 
-    // 세션 기록 로드
-    const savedSessions = localStorage.getItem('therapySessions');
-    if (savedSessions) {
-      try {
-        const sessions = JSON.parse(savedSessions);
-        if (sessions.profileKey === profile) {
-          setSessionHistory(sessions.sessions || []);
-        }
-      } catch (error) {
-        console.error('Failed to load therapy sessions:', error);
-        setSessionHistory([]);
-      }
-    }
+    // StorageManager에서 therapy 세션 로드
+    const therapySessions = getSessions({ mode: 'therapy', includeArchived: true });
+    // 현재 프로필에 맞는 세션만 필터링
+    const profileSessions = therapySessions.filter(s => s.profileKey === profile);
+    setSessionHistory(profileSessions);
   }, [navigate]);
 
   // 다음 문장 추천
@@ -67,13 +63,19 @@ const TherapyMode = () => {
   const handleSessionComplete = (sessionData) => {
     const newSession = {
       ...sessionData,
-      profileKey
+      mode: 'therapy',
+      profileKey,
+      isDemoMode,
     };
 
-    const updatedHistory = [...sessionHistory, newSession];
+    // StorageManager를 통해 저장 (자동 로테이션 + 집계 업데이트)
+    const savedSession = saveSession(newSession);
+
+    // 로컬 상태 업데이트
+    const updatedHistory = [...sessionHistory, savedSession];
     setSessionHistory(updatedHistory);
 
-    // localStorage에 저장
+    // 기존 localStorage도 업데이트 (하위 호환성)
     localStorage.setItem('therapySessions', JSON.stringify({
       profileKey,
       sessions: updatedHistory

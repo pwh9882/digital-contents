@@ -138,7 +138,7 @@ const MainHub = () => {
             progress={0}
           />
           <ModeCard
-            title="Journal Mode"
+            title="WoW Mode"
             description="Free-form writing with AI-powered emotional analysis."
             icon="✍️"
             route="/journal"

@@ -28,10 +28,32 @@ const Layout = ({ children }) => {
     return (
         <div className="min-h-screen app-surface text-text-main font-sans transition-colors duration-300">
             {/* Sidebar Navigation */}
-            <aside className={`fixed top-0 left-0 h-full bg-bg-paper border-r border-border-base z-50 transition-all duration-300 hidden md:flex flex-col ${isExpanded ? 'w-64' : 'w-20'}`}>
+            <aside className={`fixed top-0 left-0 h-full bg-bg-paper border-r border-border-base z-50 transition-all duration-300 hidden md:flex flex-col group/sidebar ${isExpanded ? 'w-64' : 'w-20'}`}>
+                {/* 사이드바 경계 토글 버튼 (Notion 스타일) */}
+                <button
+                    onClick={toggleSidebar}
+                    className="absolute -right-3 top-24 w-6 h-6 bg-bg-surface border border-border-base rounded-full shadow-md flex items-center justify-center text-text-muted hover:text-text-main hover:bg-bg-highlight hover:border-primary transition-all duration-200 opacity-0 group-hover/sidebar:opacity-100 hover:scale-110 z-10"
+                    title={isExpanded ? '사이드바 축소' : '사이드바 확장'}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`transition-transform duration-300 ${isExpanded ? '' : 'rotate-180'}`}
+                    >
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+
                 {/* Logo Area */}
-                <div className={`h-20 flex items-center border-b border-border-base ${isExpanded ? 'justify-between px-4' : 'flex-col justify-center gap-2 px-2'}`}>
-                    <div className={`flex items-center ${isExpanded ? 'min-w-0' : ''}`}>
+                <div className={`h-20 flex items-center border-b border-border-base ${isExpanded ? 'px-4' : 'justify-center px-2'}`}>
+                    <div className="flex items-center min-w-0">
                         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30 flex-shrink-0">
                             T
                         </div>
@@ -41,29 +63,6 @@ const Layout = ({ children }) => {
                             </span>
                         )}
                     </div>
-                    {/* 사이드바 토글 버튼 */}
-                    <button
-                        onClick={toggleSidebar}
-                        className="p-2 rounded-lg hover:bg-bg-highlight transition-colors text-text-muted hover:text-text-main flex-shrink-0"
-                        title={isExpanded ? '사이드바 축소' : '사이드바 확장'}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className={`transition-transform duration-300 ${isExpanded ? '' : 'rotate-180'}`}
-                        >
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <path d="M9 3v18" />
-                            <path d="M14 9l-3 3 3 3" />
-                        </svg>
-                    </button>
                 </div>
 
                 {/* Navigation Links */}

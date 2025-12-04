@@ -18,13 +18,30 @@ const TherapySentence = ({ sentence, onComplete }) => {
     });
     setShowResult(true);
 
+    // 확장 데이터 포함하여 전달
     onComplete({
+      // 문장 메타데이터
       sentenceId: sentence.id,
+      sentence: sentence.text,
+      difficulty: sentence.difficulty,
+      therapeuticIntent: sentence.therapeuticIntent,
+      scientificBasis: sentence.scientificBasis,
+      // 성능 메트릭
       typingSpeed: sessionData.typingSpeed,
       wpm: sessionData.wpm,
       accuracy: sessionData.accuracy,
+      duration: sessionData.duration,
+      // 기존 호환용 keystroke 데이터
       keystrokeLogs: sessionData.keystrokeLogs,
-      completedAt: new Date().toISOString()
+      // 확장 keystroke 데이터
+      keystrokes: sessionData.keystrokes,
+      // 통합 분석 결과
+      analytics: sessionData.analytics,
+      // 타임스탬프
+      startTime: sessionData.startTime,
+      endTime: sessionData.endTime,
+      completedAt: new Date().toISOString(),
+      isSuccess,
     });
   };
 

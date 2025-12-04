@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { recommendNextSentence, calculateMasteryProgress } from '../data/therapySentences';
 import { saveSession, getSessions, migrateIfNeeded } from '../utils/storageManager';
+import { METRIC_TOOLTIPS } from '../data/metricDescriptions';
 import ProfileBadge from '../components/therapy/ProfileBadge';
 import TherapySentence from '../components/therapy/TherapySentence';
 import ProgressTracker from '../components/therapy/ProgressTracker';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
+import Tooltip from '../components/common/Tooltip';
 
 const TherapyMode = () => {
   const navigate = useNavigate();
@@ -86,11 +88,49 @@ const TherapyMode = () => {
     setMasteryProgress(progress);
   };
 
-  // 오늘 완료한 세션 수 계산
-  const todaySessionCount = sessionHistory.filter(s => {
+  // 오늘의 세션 필터링 및 통계 계산
+  const todayStats = useMemo(() => {
     const today = new Date().toDateString();
-    return new Date(s.completedAt).toDateString() === today;
-  }).length;
+    const todaySessions = sessionHistory.filter(s =>
+      new Date(s.completedAt).toDateString() === today
+    );
+
+    if (todaySessions.length === 0) {
+      return { count: 0 };
+    }
+
+    const totalWpm = todaySessions.reduce((sum, s) => sum + (s.typingSpeed || s.wpm || 0), 0);
+    const totalAccuracy = todaySessions.reduce((sum, s) => sum + (s.accuracy || 0), 0);
+
+    // analytics 데이터가 있는 경우 확장 통계
+    let totalHesitation = 0;
+    let totalConsistency = 0;
+    let totalDwellTime = 0;
+    let totalFlightTime = 0;
+    let analyticsCount = 0;
+
+    todaySessions.forEach(s => {
+      if (s.analytics) {
+        totalHesitation += s.analytics.hesitationCount || 0;
+        totalConsistency += s.analytics.consistency || 0;
+        totalDwellTime += s.analytics.avgDwellTime || 0;
+        totalFlightTime += s.analytics.avgFlightTime || 0;
+        analyticsCount++;
+      }
+    });
+
+    return {
+      count: todaySessions.length,
+      avgWpm: Math.round(totalWpm / todaySessions.length),
+      avgAccuracy: Math.round(totalAccuracy / todaySessions.length * 10) / 10,
+      totalHesitation,
+      avgConsistency: analyticsCount > 0 ? Math.round(totalConsistency / analyticsCount) : null,
+      avgDwellTime: analyticsCount > 0 ? Math.round(totalDwellTime / analyticsCount) : null,
+      avgFlightTime: analyticsCount > 0 ? Math.round(totalFlightTime / analyticsCount) : null,
+    };
+  }, [sessionHistory]);
+
+  const todaySessionCount = todayStats.count;
 
   if (!profileKey || !currentSentence) {
     return (
@@ -145,6 +185,61 @@ const TherapyMode = () => {
             Insight 모드 시작
           </Button>
         </div>
+      )}
+
+      {/* 오늘의 세션 통계 */}
+      {todayStats.count > 0 && (
+        <Card variant="flat" className="bg-bg-highlight/50 border-border-base animate-fade-in">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4">
+            <div className="text-xs text-text-muted font-medium uppercase tracking-wider">
+              오늘의 기록 ({todayStats.count}세션 완료)
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+              <Tooltip content={METRIC_TOOLTIPS.typingSpeed}>
+                <div className="text-center cursor-help">
+                  <div className="text-lg font-bold text-primary font-mono">{todayStats.avgWpm}</div>
+                  <div className="text-xs text-text-muted">평균 타/분</div>
+                </div>
+              </Tooltip>
+              <div className="w-px bg-border-base h-8 hidden md:block" />
+              <Tooltip content={METRIC_TOOLTIPS.accuracy}>
+                <div className="text-center cursor-help">
+                  <div className="text-lg font-bold text-secondary font-mono">{todayStats.avgAccuracy}%</div>
+                  <div className="text-xs text-text-muted">평균 정확도</div>
+                </div>
+              </Tooltip>
+              <div className="w-px bg-border-base h-8 hidden md:block" />
+              <Tooltip content={METRIC_TOOLTIPS.totalHesitation}>
+                <div className="text-center cursor-help">
+                  <div className="text-lg font-bold text-orange-600 font-mono">{todayStats.totalHesitation}</div>
+                  <div className="text-xs text-text-muted">총 망설임</div>
+                </div>
+              </Tooltip>
+              {todayStats.avgConsistency !== null && (
+                <>
+                  <div className="w-px bg-border-base h-8 hidden md:block" />
+                  <Tooltip content={METRIC_TOOLTIPS.consistency}>
+                    <div className="text-center cursor-help">
+                      <div className="text-lg font-bold text-purple-600 font-mono">{todayStats.avgConsistency}%</div>
+                      <div className="text-xs text-text-muted">일관성</div>
+                    </div>
+                  </Tooltip>
+                </>
+              )}
+              {todayStats.avgDwellTime !== null && (
+                <>
+                  <div className="w-px bg-border-base h-8 hidden md:block" />
+                  <Tooltip content={METRIC_TOOLTIPS.dwellTime}>
+                    <div className="text-center cursor-help">
+                      <div className="text-lg font-bold text-teal-600 font-mono">{todayStats.avgDwellTime}ms</div>
+                      <div className="text-xs text-text-muted">키 누름</div>
+                    </div>
+                  </Tooltip>
+                </>
+              )}
+            </div>
+          </div>
+        </Card>
       )}
 
       {/* Main Content Grid */}

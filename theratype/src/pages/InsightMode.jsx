@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { insightSentences } from '../data/insightSentences';
 import { assignProfile } from '../data/therapySentences';
 import { saveSession } from '../utils/storageManager';
+import { METRIC_TOOLTIPS } from '../data/metricDescriptions';
 import SentencePair from '../components/insight/SentencePair';
 import TypingInput from '../components/insight/TypingInput';
 import InsightResult from '../components/insight/InsightResult';
 import Button from '../components/common/Button';
+import Card from '../components/common/Card';
+import Tooltip from '../components/common/Tooltip';
 
 const InsightMode = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -16,6 +19,35 @@ const InsightMode = () => {
 
   const currentPair = insightSentences[currentIndex];
   const progress = ((currentIndex) / insightSentences.length) * 100;
+
+  // 현재까지의 누적 통계 계산
+  const sessionStats = useMemo(() => {
+    if (selections.length === 0) return null;
+
+    const totalWpm = selections.reduce((sum, s) => sum + (s.wpm || 0), 0);
+    const totalAccuracy = selections.reduce((sum, s) => sum + (s.accuracy || 0), 0);
+
+    // analytics 데이터가 있는 경우 확장 통계
+    let totalHesitation = 0;
+    let totalConsistency = 0;
+    let analyticsCount = 0;
+
+    selections.forEach(s => {
+      if (s.sessionData?.analytics) {
+        totalHesitation += s.sessionData.analytics.hesitationCount || 0;
+        totalConsistency += s.sessionData.analytics.consistency || 0;
+        analyticsCount++;
+      }
+    });
+
+    return {
+      count: selections.length,
+      avgWpm: Math.round(totalWpm / selections.length),
+      avgAccuracy: Math.round(totalAccuracy / selections.length * 10) / 10,
+      totalHesitation,
+      avgConsistency: analyticsCount > 0 ? Math.round(totalConsistency / analyticsCount) : null,
+    };
+  }, [selections]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -123,7 +155,7 @@ const InsightMode = () => {
   return (
     <div className="max-w-6xl mx-auto min-h-[80vh] flex flex-col animate-fade-in">
       {/* Progress Header */}
-      <div className="mb-12">
+      <div className="mb-8">
         <div className="flex justify-between items-end mb-4">
           <div>
             <h1 className="text-2xl font-display font-bold text-text-main">Insight Mode</h1>
@@ -141,6 +173,52 @@ const InsightMode = () => {
           />
         </div>
       </div>
+
+      {/* 현재 세션 누적 통계 */}
+      {sessionStats && (
+        <div className="mb-8 animate-fade-in">
+          <Card variant="flat" className="bg-bg-highlight/50 border-border-base">
+            <div className="flex items-center justify-between gap-4 p-4">
+              <div className="text-xs text-text-muted font-medium uppercase tracking-wider">
+                현재 세션 ({sessionStats.count}문장 완료)
+              </div>
+              <div className="flex items-center gap-6">
+                <Tooltip content={METRIC_TOOLTIPS.typingSpeed}>
+                  <div className="text-center cursor-help">
+                    <div className="text-lg font-bold text-primary font-mono">{sessionStats.avgWpm}</div>
+                    <div className="text-xs text-text-muted">평균 타/분</div>
+                  </div>
+                </Tooltip>
+                <div className="w-px bg-border-base h-8" />
+                <Tooltip content={METRIC_TOOLTIPS.accuracy}>
+                  <div className="text-center cursor-help">
+                    <div className="text-lg font-bold text-secondary font-mono">{sessionStats.avgAccuracy}%</div>
+                    <div className="text-xs text-text-muted">평균 정확도</div>
+                  </div>
+                </Tooltip>
+                <div className="w-px bg-border-base h-8" />
+                <Tooltip content={METRIC_TOOLTIPS.totalHesitation}>
+                  <div className="text-center cursor-help">
+                    <div className="text-lg font-bold text-orange-600 font-mono">{sessionStats.totalHesitation}</div>
+                    <div className="text-xs text-text-muted">총 망설임</div>
+                  </div>
+                </Tooltip>
+                {sessionStats.avgConsistency !== null && (
+                  <>
+                    <div className="w-px bg-border-base h-8" />
+                    <Tooltip content={METRIC_TOOLTIPS.consistency}>
+                      <div className="text-center cursor-help">
+                        <div className="text-lg font-bold text-purple-600 font-mono">{sessionStats.avgConsistency}%</div>
+                        <div className="text-xs text-text-muted">일관성</div>
+                      </div>
+                    </Tooltip>
+                  </>
+                )}
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col justify-center">

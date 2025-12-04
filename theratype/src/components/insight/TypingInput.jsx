@@ -8,6 +8,8 @@ import {
   detectAbnormalWPM,
 } from '../../utils/typingAnalyzer';
 import { KeystrokeCollector } from '../../utils/keystrokeCollector';
+import Tooltip from '../common/Tooltip';
+import { METRIC_TOOLTIPS } from '../../data/metricDescriptions';
 
 const TypingInput = ({ targetSentence, onComplete }) => {
   const [typedText, setTypedText] = useState('');
@@ -61,27 +63,40 @@ const TypingInput = ({ targetSentence, onComplete }) => {
     }
   }, [typedText, targetSentence, startTime]);
 
-  // 1초마다 통계 갱신
+  // typedText 변경 시 즉시 통계 갱신
+  useEffect(() => {
+    if (!startTime || typedText.length === 0) return;
+
+    const elapsed = Date.now() - startTime;
+    const currentSpeed = calculateTypingSpeed(typedText, elapsed);
+    const currentAccuracy = calculateAccuracy(targetSentence, typedText, isComposing);
+
+    setTypingSpeed(currentSpeed);
+    setAccuracy(currentAccuracy);
+  }, [startTime, typedText, targetSentence, isComposing]);
+
+  // 타이핑 안 할 때도 시간 경과에 따른 WPM 감소 반영 (1초마다)
   useEffect(() => {
     if (!startTime || typedText.length === 0) return;
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const currentSpeed = calculateTypingSpeed(typedText, elapsed);
-      const currentAccuracy = calculateAccuracy(targetSentence, typedText, isComposing);
-
       setTypingSpeed(currentSpeed);
-      setAccuracy(currentAccuracy);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, typedText, targetSentence, isComposing]);
+  }, [startTime, typedText]);
 
   const handleComplete = useCallback(() => {
     if (!startTime) return;
 
     const endTime = Date.now();
     const duration = endTime - startTime;
+
+    // 최종 통계를 여기서 직접 계산 (state는 비동기 업데이트라 신뢰할 수 없음)
+    const finalTypingSpeed = calculateTypingSpeed(typedText, duration);
+    const finalAccuracy = calculateAccuracy(targetSentence, typedText, false);
 
     // 확장 keystroke 데이터 가져오기
     const enhancedKeystrokes = collectorRef.current.getKeystrokes();
@@ -90,7 +105,7 @@ const TypingInput = ({ targetSentence, onComplete }) => {
     // 기존 분석 함수 활용
     const hesitation = analyzeHesitation(keystrokeLogs);
     const rhythm = analyzeTypingRhythm(keystrokeLogs);
-    const isAbnormal = detectAbnormalWPM(typingSpeed, keystrokeLogs);
+    const isAbnormal = detectAbnormalWPM(finalTypingSpeed, keystrokeLogs);
 
     // 통합 analytics 객체
     const analytics = {
@@ -122,16 +137,16 @@ const TypingInput = ({ targetSentence, onComplete }) => {
       keystrokeLogs,
       // 확장 keystroke 데이터
       keystrokes: enhancedKeystrokes,
-      // 성능 메트릭
-      typingSpeed, // 타/분
-      wpm: typingSpeed, // 하위 호환성
-      accuracy,
+      // 성능 메트릭 (직접 계산한 값 사용)
+      typingSpeed: finalTypingSpeed,
+      wpm: finalTypingSpeed,
+      accuracy: finalAccuracy,
       // 통합 분석 결과
       analytics,
     };
 
     onComplete(sessionData);
-  }, [targetSentence, typedText, startTime, keystrokeLogs, typingSpeed, accuracy, onComplete]);
+  }, [targetSentence, typedText, startTime, keystrokeLogs, onComplete]);
 
   const handleKeyDown = (e) => {
     if (isComposing) return;
@@ -266,15 +281,19 @@ const TypingInput = ({ targetSentence, onComplete }) => {
 
       {/* Stats */}
       <div className="flex justify-center gap-12 pt-4">
-        <div className="text-center">
-          <div className="text-3xl font-bold text-primary font-mono">{typingSpeed}</div>
-          <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">타/분</div>
-        </div>
+        <Tooltip content={METRIC_TOOLTIPS.typingSpeed} position="bottom">
+          <div className="text-center cursor-help">
+            <div className="text-3xl font-bold text-primary font-mono">{typingSpeed}</div>
+            <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">타/분</div>
+          </div>
+        </Tooltip>
         <div className="w-px bg-border-base h-12" />
-        <div className="text-center">
-          <div className="text-3xl font-bold text-secondary font-mono">{accuracy}%</div>
-          <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">정확도</div>
-        </div>
+        <Tooltip content={METRIC_TOOLTIPS.accuracy} position="bottom">
+          <div className="text-center cursor-help">
+            <div className="text-3xl font-bold text-secondary font-mono">{accuracy}%</div>
+            <div className="text-xs uppercase tracking-wider text-text-muted font-medium mt-1">정확도</div>
+          </div>
+        </Tooltip>
       </div>
     </div>
   );

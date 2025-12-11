@@ -158,6 +158,10 @@ theratype/
 - **BaaS**: Firebase (Authentication + Firestore)
 - **Hosting**: Firebase Hosting
 
+### 자동 배포 (CI/CD)
+- **GitHub Pages**: `.github/workflows/deploy.yml` (Main 브랜치 푸시 시 자동 배포)
+- **GitLab Pages**: `.gitlab-ci.yml` (Main 브랜치 푸시 시 자동 배포)
+
 ---
 
 ## 📚 참고 문서

@@ -48,7 +48,7 @@ import RecapMode from './pages/RecapMode';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/digital-contents">
       <Layout>
         <Routes>
           <Route path="/" element={<MainHub />} />

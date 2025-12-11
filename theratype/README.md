@@ -90,7 +90,13 @@ theratype/
 
 ---
 
-## 🌟 핵심 기능
+## 🌟 핵심 기능 (Core Features)
+
+### 0️⃣ 메인 허브 (Main Hub)
+
+**시작점**: 모든 모드로의 접근성을 제공하는 중앙 허브입니다.
+
+![Main Hub Screen](docs/screenshots/home.png)
 
 ### 1️⃣ Insight Mode (인사이트 모드)
 
@@ -100,6 +106,8 @@ theratype/
 - 공감하는 문장을 타이핑하여 선택
 - 누적 선택 패턴으로 심리 프로파일 구축
 - 시각화된 인사이트 제공
+
+![Insight Mode Screen](docs/screenshots/insight.png)
 
 **과학적 근거**: Expressive Writing Paradigm (Pennebaker, 1986), Keystroke Dynamics (Epp et al., 2011)
 
@@ -112,14 +120,28 @@ theratype/
 - 타이핑하며 긍정 메시지 내면화
 - 적응형 난이도 조절
 
+![Therapy Mode Screen](docs/screenshots/therapy.png)
+
 **과학적 근거**: Self-Affirmation Theory (Steele, 1988), Cognitive Behavioral Therapy
 
-### 3️⃣ 진행 추적 대시보드
+### 3️⃣ Recap Mode (회고 모드)
+
+**컨셉**: 자기 성찰을 위한 저널링
+
+- 오늘의 감정과 생각을 자유롭게 기록
+- 마크다운 에디터 지원
+- 다크모드 대응 글쓰기 환경
+
+![Recap Mode Screen](docs/screenshots/recap.png)
+
+### 4️⃣ 진행 추적 대시보드
 
 - 타이핑 속도/정확도 향상 그래프
 - 감정 상태 변화 추이
 - 연속 사용 일수 (스트릭)
 - 프로파일별 마스터한 문장 수
+
+![Dashboard Screen](docs/screenshots/dashboard.png)
 
 ---
 
@@ -139,6 +161,9 @@ theratype/
 ---
 
 ## 📚 참고 문서
+
+### 가이드
+- **[사용자 가이드 (User Guide)](docs/USER_GUIDE.md)**: 상세 사용법 및 시나리오
 
 ### 프로젝트 문서
 - `../AGENTS.md`: 프로젝트 개요 및 핵심 컨셉

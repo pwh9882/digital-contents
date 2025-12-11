@@ -22,6 +22,7 @@ const Layout = ({ children }) => {
         { path: '/', label: 'Hub', icon: '🏠' },
         { path: '/insight', label: 'Insight', icon: '🧠' },
         { path: '/therapy', label: 'Therapy', icon: '🌿' },
+        { path: '/recap', label: 'Recap', icon: '✍️' },
         { path: '/dashboard', label: 'Dashboard', icon: '📊' },
     ];
 

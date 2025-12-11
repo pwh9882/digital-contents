@@ -44,6 +44,7 @@ import Layout from './components/layout/Layout';
 // );
 
 import DashboardPage from './pages/DashboardPage';
+import RecapMode from './pages/RecapMode';
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/insight" element={<InsightMode />} />
           <Route path="/therapy" element={<TherapyMode />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/recap" element={<RecapMode />} />
         </Routes>
       </Layout>
     </Router>

@@ -109,11 +109,10 @@ const MainHub = () => {
           />
           <ModeCard
             title="Recap Mode"
-            description="Free-form writing with AI-powered emotional analysis."
+            description="마크다운으로 오늘의 생각과 감정을 기록하세요."
             icon="✍️"
-            route="/journal"
-            enabled={false}
-            comingSoon={true}
+            route="/recap"
+            enabled={true}
             color="from-amber-400 to-orange-500"
           />
         </div>

@@ -39,7 +39,15 @@ const DATA_VERSION = '2.0.0';
 export function getUserId() {
   let userId = localStorage.getItem(STORAGE_KEYS.USER_ID);
   if (!userId) {
-    userId = crypto.randomUUID();
+    // crypto.randomUUID fallback for non-secure contexts
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      userId = crypto.randomUUID();
+    } else {
+      userId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
     localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
   }
   return userId;
@@ -57,7 +65,10 @@ export function getUserId() {
 export function saveSession(sessionData) {
   // 세션 ID 생성 (없으면)
   const session = {
-    sessionId: sessionData.sessionId || crypto.randomUUID(),
+    sessionId: sessionData.sessionId || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    })),
     userId: getUserId(),
     savedAt: new Date().toISOString(),
     dataVersion: DATA_VERSION,
@@ -502,7 +513,10 @@ export function migrateIfNeeded() {
       ...session,
       mode: 'therapy',
       profileKey: session.profileKey || legacyTherapy.profileKey,
-      sessionId: session.sessionId || crypto.randomUUID(),
+      sessionId: session.sessionId || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      })),
     }));
 
     // 기존 recent에 추가 (중복 방지)
